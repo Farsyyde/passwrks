@@ -1,0 +1,1290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20fill%3D%27%23171410%27%2F%3E%3Crect%20x%3D%279%27%20y%3D%2713%27%20width%3D%2746%27%20height%3D%2738%27%20rx%3D%276%27%20fill%3D%27%23c93a12%27%2F%3E%3Ccircle%20cx%3D%279%27%20cy%3D%2732%27%20r%3D%275%27%20fill%3D%27%23171410%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2732%27%20r%3D%275%27%20fill%3D%27%23171410%27%2F%3E%3Ctext%20x%3D%2732%27%20y%3D%2743%27%20font-family%3D%27Arial%2Csans-serif%27%20font-size%3D%2727%27%20font-weight%3D%27900%27%20fill%3D%27%23fbf9f1%27%20text-anchor%3D%27middle%27%3EP%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20fill%3D%27%23171410%27%2F%3E%3Crect%20x%3D%279%27%20y%3D%2713%27%20width%3D%2746%27%20height%3D%2738%27%20rx%3D%276%27%20fill%3D%27%23c93a12%27%2F%3E%3Ccircle%20cx%3D%279%27%20cy%3D%2732%27%20r%3D%275%27%20fill%3D%27%23171410%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2732%27%20r%3D%275%27%20fill%3D%27%23171410%27%2F%3E%3Ctext%20x%3D%2732%27%20y%3D%2743%27%20font-family%3D%27Arial%2Csans-serif%27%20font-size%3D%2727%27%20font-weight%3D%27900%27%20fill%3D%27%23fbf9f1%27%20text-anchor%3D%27middle%27%3EP%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<title>PassWrks, ERC-8426 Pass Checker</title>
+<meta name="description" content="PassWrks checks whether an NFT wallet pass follows the ERC-8426 standard. Paste a contract and a token ID to validate the pass manifest, the gated flow and the issuer commitment, and get a stamped conformance report." />
+<link rel="canonical" href="https://passwrks.com" />
+<meta property="og:title" content="PassWrks, ERC-8426 Pass Checker" />
+<meta property="og:description" content="PassWrks checks whether an NFT wallet pass follows the ERC-8426 standard. Paste a contract and a token ID to validate the pass manifest, the gated flow and the issuer commitment, and get a stamped conformance report." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://passwrks.com" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="PassWrks, ERC-8426 Pass Checker" />
+<meta name="twitter:description" content="PassWrks checks whether an NFT wallet pass follows the ERC-8426 standard. Paste a contract and a token ID to validate the pass manifest, the gated flow and the issuer commitment, and get a stamped conformance report." />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"PassWrks","alternateName":"PassWrks, ERC-8426 Pass Checker","url":"https://passwrks.com","description":"PassWrks checks whether an NFT wallet pass follows the ERC-8426 standard. Paste a contract and a token ID to validate the pass manifest, the gated flow and the issuer commitment, and get a stamped conformance report.","applicationCategory":"DeveloperApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isAccessibleForFree":true}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#f3efe3; --paper-2:#ebe6d6; --card:#fbf9f1; --ink:#171410; --ink-2:#57503e; --ink-3:#8a8271;
+  --line:#171410; --line-soft:rgba(23,20,16,.18);
+  --accent:#c93a12; --accent-ink:#fff7ed;
+  --green:#14663f; --green-bg:#dcefe2;
+  --red:#b3261e; --red-bg:#f6ded9;
+  --amber:#8a5d00; --amber-bg:#f3e3ae;
+  --skip-bg:#e7e2d2;
+  --pass-dark:#191713;
+  --shadow:6px 6px 0 rgba(23,20,16,.9);
+  --shadow-sm:3px 3px 0 rgba(23,20,16,.85);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#141311; --paper-2:#1c1b18; --card:#1e1d1a; --ink:#ece7d7; --ink-2:#b3ac99; --ink-3:#7e7869;
+    --line:#ece7d7; --line-soft:rgba(236,231,215,.22);
+    --accent:#e4572e; --accent-ink:#fff7ed;
+    --green:#5fce96; --green-bg:#173a28;
+    --red:#ff8a7a; --red-bg:#47201c;
+    --amber:#eec25e; --amber-bg:#423512;
+    --skip-bg:#2a2925;
+    --pass-dark:#0c0b0a;
+    --shadow:6px 6px 0 rgba(0,0,0,.65);
+    --shadow-sm:3px 3px 0 rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Archivo",system-ui,sans-serif; font-size:16px; line-height:1.5;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:56px 56px; background-position:center top;
+}
+::selection{background:var(--accent); color:var(--accent-ink)}
+a{color:var(--accent); text-underline-offset:3px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.wrap{max-width:1240px; margin:0 auto; padding:0 20px}
+h1,h2,h3{line-height:1.02; letter-spacing:-.01em; margin:0}
+button{font:inherit; cursor:pointer}
+:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+/* ── top strip ─────────────────────────── */
+.topstrip{border-bottom:2px solid var(--line); background:var(--paper)}
+.topstrip .wrap{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center; padding-top:9px; padding-bottom:9px; font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.04em}
+.topstrip b{font-weight:700}
+.topstrip .spacer{flex:1}
+.chip{display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--line); padding:2px 8px; font-weight:600; background:var(--card)}
+.dot{width:8px;height:8px;background:var(--amber); border:1.5px solid var(--line); display:inline-block}
+
+/* ── masthead ──────────────────────────── */
+.masthead{border-bottom:2px solid var(--line)}
+.masthead .wrap{display:grid; grid-template-columns:1.55fr .9fr; gap:36px; padding:44px 20px 40px; align-items:end}
+.kicker{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; display:flex; align-items:center; gap:10px}
+.kicker::before{content:""; width:34px; height:3px; background:var(--accent); display:inline-block}
+.masthead h1{font-size:clamp(52px,8.5vw,104px); font-weight:900; text-transform:uppercase; margin:14px 0 6px}
+.masthead h1 .thin{font-weight:400; -webkit-text-stroke:2px var(--ink); color:transparent}
+@media (prefers-color-scheme: dark){ .masthead h1 .thin{-webkit-text-stroke:2px var(--ink)} }
+.lede{font-size:19px; max-width:56ch; color:var(--ink); margin:10px 0 0}
+.lede b{background:var(--amber-bg); padding:0 4px}
+.mast-meta{display:flex; flex-wrap:wrap; gap:18px 28px; margin-top:22px; font-family:"IBM Plex Mono",monospace; font-size:12.5px}
+.mast-meta div span{display:block; color:var(--ink-2); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase}
+.mast-meta div b{font-size:14px}
+
+/* specimen pass */
+.specimen{justify-self:end; width:min(340px,100%); transform:rotate(2.5deg)}
+.specimen figcaption{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin-top:10px; text-align:right}
+.passcard{background:var(--pass-dark); color:#f2ecdc; border:2px solid var(--line); box-shadow:var(--shadow); padding:18px 18px 14px; position:relative; overflow:hidden}
+.passcard::after{content:""; position:absolute; inset:auto -30px -46px auto; width:150px; height:150px; border:2px solid rgba(242,236,220,.25); border-radius:50%}
+.pass-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+.pass-org{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; opacity:.75}
+.pass-name{font-size:24px; font-weight:800; text-transform:uppercase; line-height:1.05; margin-top:4px}
+.pass-live{font-family:"IBM Plex Mono",monospace; font-size:10px; font-weight:700; border:1.5px solid #f2ecdc; padding:3px 7px; white-space:nowrap}
+.pass-live i{font-style:normal; color:#7ee2a8}
+.pass-fields{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-top:18px; font-family:"IBM Plex Mono",monospace}
+.pass-fields span{display:block; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; opacity:.65}
+.pass-fields b{font-size:14px; font-weight:600}
+.pass-bar{margin-top:16px; height:30px; background:repeating-linear-gradient(90deg,#f2ecdc 0 3px,transparent 3px 6px,#f2ecdc 6px 7px,transparent 7px 12px,#f2ecdc 12px 15px,transparent 15px 18px)}
+.pass-foot{display:flex; justify-content:space-between; font-family:"IBM Plex Mono",monospace; font-size:10px; margin-top:8px; opacity:.8}
+
+/* ── section scaffolding ───────────────── */
+section{border-bottom:2px solid var(--line)}
+.sec-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 20px; padding:34px 0 6px}
+.sec-no{font-family:"IBM Plex Mono",monospace; font-weight:700; color:var(--accent); font-size:15px}
+.sec-head h2{font-size:clamp(28px,4vw,40px); font-weight:800; text-transform:uppercase}
+.sec-head p{width:100%; max-width:72ch; color:var(--ink-2); margin:2px 0 0}
+
+/* ── workbench ─────────────────────────── */
+.bench{display:grid; grid-template-columns:430px 1fr; gap:28px; padding:22px 0 44px; align-items:start}
+.panel{background:var(--card); border:2px solid var(--line); box-shadow:var(--shadow)}
+.panel-h{border-bottom:2px solid var(--line); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px}
+.panel-h h3{font-size:14px; text-transform:uppercase; letter-spacing:.08em}
+.panel-h .mono{font-size:11px; color:var(--ink-2)}
+.panel-b{padding:16px}
+.field{margin-bottom:16px}
+.field label{display:flex; justify-content:space-between; align-items:baseline; font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px}
+.field label .hint{font-weight:400; letter-spacing:0; text-transform:none; color:var(--ink-2); font-size:11px}
+input[type=text],input[type=url],select,textarea{
+  width:100%; font-family:"IBM Plex Mono",monospace; font-size:13.5px; color:var(--ink);
+  background:var(--paper); border:1.5px solid var(--line); padding:11px 12px; border-radius:0; appearance:none;
+}
+textarea{resize:vertical; min-height:110px; font-size:12.5px}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--accent); outline-offset:1px}
+.field .msg{font-family:"IBM Plex Mono",monospace; font-size:11.5px; margin-top:5px; min-height:15px}
+.msg.ok{color:var(--green)} .msg.err{color:var(--red)} .msg.warn{color:var(--amber)}
+select{background-image:linear-gradient(45deg,transparent 49%,var(--ink) 50%),linear-gradient(-45deg,transparent 49%,var(--ink) 50%); background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%; background-size:6px 6px; background-repeat:no-repeat}
+.seg{display:grid; grid-template-columns:1fr 1fr; border:1.5px solid var(--line)}
+.seg button{background:var(--paper); border:0; padding:11px 8px; font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase}
+.seg button[aria-pressed=true]{background:var(--ink); color:var(--paper)}
+.seg button + button{border-left:1.5px solid var(--line)}
+.mode-note{font-size:13px; color:var(--ink-2); border-left:4px solid var(--accent); padding:8px 12px; background:var(--paper); margin-top:10px}
+.mode-note b{color:var(--ink)}
+.run-btn{
+  width:100%; background:var(--accent); color:var(--accent-ink); border:2px solid var(--line); box-shadow:var(--shadow-sm);
+  font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:17px; padding:15px 16px; margin-top:4px;
+}
+.run-btn:active{transform:translate(3px,3px); box-shadow:none}
+.run-btn[disabled]{opacity:.55; cursor:wait; transform:none}
+.alt-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+.btn{
+  background:var(--card); border:1.5px solid var(--line); padding:8px 12px; font-family:"IBM Plex Mono",monospace;
+  font-size:12px; font-weight:600; box-shadow:2px 2px 0 rgba(23,20,16,.7);
+}
+.btn:active{transform:translate(2px,2px); box-shadow:none}
+.btn.primary{background:var(--ink); color:var(--paper)}
+details.adv{border-top:1.5px dashed var(--line-soft); margin-top:16px; padding-top:12px}
+details.adv summary{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer}
+.cli-box{background:var(--pass-dark); color:#f2ecdc; font-family:"IBM Plex Mono",monospace; font-size:12px; padding:12px; margin-top:10px; overflow-x:auto; white-space:pre; border:2px solid var(--line)}
+.cli-box .c{color:#9d9684}
+
+/* report */
+.report-empty{padding:34px 26px; text-align:left}
+.report-empty h3{font-size:22px; text-transform:uppercase; margin-bottom:8px}
+.report-empty p{color:var(--ink-2); max-width:52ch}
+.report-empty ol{margin:14px 0 0; padding-left:20px; color:var(--ink-2)}
+.report-empty li{margin:6px 0}
+.report-empty li b{color:var(--ink)}
+.verdict{display:flex; flex-wrap:wrap; gap:18px; align-items:center; padding:18px; border-bottom:2px solid var(--line)}
+.stamp{
+  font-weight:900; text-transform:uppercase; letter-spacing:.04em; font-size:clamp(22px,3.4vw,32px);
+  border:3.5px solid currentColor; padding:8px 16px; transform:rotate(-2deg); line-height:1;
+}
+.stamp.pass{color:var(--green)} .stamp.fail{color:var(--red)} .stamp.partial{color:var(--amber)} .stamp.sample{color:var(--accent)}
+.verdict-meta{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2)}
+.counts{display:grid; grid-template-columns:repeat(4,1fr); border-bottom:2px solid var(--line)}
+.counts div{padding:12px 14px; border-right:1.5px solid var(--line-soft)}
+.counts div:last-child{border-right:0}
+.counts b{display:block; font-size:30px; font-weight:900; line-height:1}
+.counts span{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2)}
+.meta-table{width:100%; border-collapse:collapse; font-family:"IBM Plex Mono",monospace; font-size:12.5px}
+.meta-table th,.meta-table td{padding:8px 14px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top}
+.meta-table th{width:150px; color:var(--ink-2); font-weight:600; font-size:11px; letter-spacing:.1em; text-transform:uppercase}
+.meta-table td{word-break:break-all}
+.copy-btn{border:1.5px solid var(--line); background:var(--card); font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:700; padding:2px 7px; margin-left:8px; vertical-align:middle}
+.group-h{display:flex; justify-content:space-between; align-items:baseline; padding:16px 16px 4px}
+.group-h h4{margin:0; font-size:15px; text-transform:uppercase; letter-spacing:.05em}
+.group-h .mono{font-size:11px; color:var(--ink-2)}
+.check{display:grid; grid-template-columns:86px 1fr; gap:12px; padding:11px 16px; border-top:1px solid var(--line-soft); align-items:start}
+.pill{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-align:center; padding:4px 4px; border:1.5px solid var(--line); text-transform:uppercase}
+.pill.pass{background:var(--green-bg); color:var(--green)}
+.pill.fail{background:var(--red-bg); color:var(--red)}
+.pill.warn{background:var(--amber-bg); color:var(--amber)}
+.pill.skip{background:var(--skip-bg); color:var(--ink-2)}
+.pill.run{background:var(--paper-2); color:var(--ink-2)}
+.check .cid{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700}
+.check .ctitle{font-size:14px}
+.check .cdetail{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-2); margin-top:2px; word-break:break-word}
+.check .lvl{font-family:"IBM Plex Mono",monospace; font-size:10px; border:1px solid var(--line-soft); padding:1px 5px; margin-left:8px; color:var(--ink-2); vertical-align:middle}
+.fixbox{margin:16px; border:2px solid var(--accent); padding:14px 16px; background:var(--paper)}
+.fixbox h4{margin:0 0 8px; text-transform:uppercase; font-size:14px; color:var(--accent)}
+.fixbox li{margin:6px 0; font-size:14px}
+.fixbox .mono{font-size:12px}
+.plain-summary{margin:16px; border:2px solid var(--line); padding:14px 16px; background:var(--paper)}
+.plain-summary h4{margin:0 0 8px; text-transform:uppercase; font-size:14px}
+.plain-summary p{margin:6px 0; font-size:14.5px}
+.plain-summary p:last-child{margin-bottom:0}
+.check .cplain{font-size:13px; color:var(--ink-2); margin-top:3px; line-height:1.45}
+.field-note{font-size:13px; color:var(--ink-2); margin:6px 0 0; line-height:1.45}
+.report-actions{display:flex; flex-wrap:wrap; gap:8px; padding:0 16px 18px}
+.share-route{margin:0 16px 18px; border:1.5px dashed var(--line); padding:12px 14px; font-family:"IBM Plex Mono",monospace; font-size:12px; word-break:break-all; background:var(--paper)}
+.share-route b{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:5px}
+.progress-line{height:8px; border:1.5px solid var(--line); margin:0 16px 6px; display:none}
+.progress-line i{display:block; height:100%; background:var(--accent); width:0%; transition:width .25s}
+.sample-banner{background:var(--accent); color:var(--accent-ink); font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.06em; padding:9px 16px; text-transform:uppercase}
+
+/* reference table */
+.ref-wrap{padding:16px 0 40px; overflow:visible}
+table.ref{width:100%; border-collapse:collapse; background:var(--card); border:2px solid var(--line); box-shadow:var(--shadow)}
+table.ref th,table.ref td{padding:9px 12px; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top; font-size:13.5px}
+table.ref thead th{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; border-bottom:2px solid var(--line); background:var(--paper-2)}
+table.ref td.id{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; white-space:nowrap}
+table.ref td.lvl{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:700}
+table.ref tr:hover td{background:var(--paper)}
+.filter-row{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0}
+
+/* two-col explainers */
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:28px; padding:20px 0 44px}
+.mini-panel{background:var(--card); border:2px solid var(--line); box-shadow:var(--shadow-sm); padding:20px}
+.mini-panel h3{font-size:19px; text-transform:uppercase; margin-bottom:8px}
+.mini-panel p,.mini-panel li{color:var(--ink-2); font-size:14.5px}
+.mini-panel b,.mini-panel li b{color:var(--ink)}
+.mini-panel ul{padding-left:18px; margin:8px 0}
+.mini-panel li{margin:5px 0}
+.num-badge{display:inline-block; background:var(--accent); color:var(--accent-ink); font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:12px; padding:3px 9px; margin-bottom:10px}
+
+/* roadmap */
+.road{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; padding:20px 0 44px}
+.phase{border:2px solid var(--line); background:var(--card); padding:20px; box-shadow:var(--shadow-sm)}
+.phase.now{background:var(--ink); color:var(--paper)}
+.phase.now p{color:var(--ink-3)}
+.phase .mono{font-size:11px; letter-spacing:.14em; text-transform:uppercase}
+.phase h3{font-size:21px; text-transform:uppercase; margin:6px 0 8px}
+.phase p{color:var(--ink-2); font-size:14.5px; margin:0}
+
+footer{padding:30px 0 46px}
+footer .cols2{display:flex; flex-wrap:wrap; gap:14px 40px; font-size:13.5px; color:var(--ink-2)}
+footer .mono{font-size:11.5px}
+.toast{position:fixed; left:50%; bottom:22px; transform:translate(-50%,80px); background:var(--ink); color:var(--paper); font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; padding:11px 18px; border:2px solid var(--line); z-index:50; transition:transform .25s; max-width:92vw; text-align:center}
+.toast.show{transform:translate(-50%,0)}
+.recent{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+.recent button{font-family:"IBM Plex Mono",monospace; font-size:11px; border:1.5px solid var(--line); background:var(--paper); padding:4px 8px}
+
+@media (max-width:960px){
+  .masthead .wrap{grid-template-columns:1fr; padding-top:32px}
+  .specimen{justify-self:start}
+  .bench{grid-template-columns:1fr}
+  .cols,.road{grid-template-columns:1fr}
+  .counts{grid-template-columns:repeat(2,1fr)}
+  .counts div{border-bottom:1px solid var(--line-soft)}
+  table.ref thead{display:none}
+  table.ref,table.ref tbody,table.ref tr,table.ref td{display:block; width:100%}
+  table.ref tr{border-bottom:2px solid var(--line); padding:6px 0}
+  table.ref td{border-bottom:0; padding:4px 12px}
+  table.ref td.id{white-space:normal}
+  .check{grid-template-columns:70px 1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <span><b>PASSWRKS</b> · ERC-8426 WALLET PASS TOOLKIT</span>
+    <span class="chip"><span class="dot" aria-hidden="true"></span>ERC-8426 · STATUS: DRAFT</span>
+    <span class="spacer"></span>
+    <span>INTERFACE <b>0xef5f1e71</b></span>
+    <span>ERCs PR <b>#2036</b></span>
+    <span><a href="https://github.com/huntclubhero/erc8426-sdk" target="_blank" rel="noopener">SDK ↗</a></span>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div>
+      <p class="kicker">PassWrks · Conformance suite, Phase 1</p>
+      <h1>Pass<span class="thin">Wrks</span></h1>
+      <p class="lede" style="font-size:15px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; margin-top:2px">Pass Checker, the first instrument in the PassWrks toolkit</p>
+      <p class="lede">Paste a contract and a token ID. This workbench reads the chain from your browser, resolves <b>passURI</b>, validates the manifest, and probes the gated flow, then stamps a verdict against <b>every browser-observable MUST in ERC-8426</b>. Checks that need an owner key or the server's cooperation come back <b>INCOMPLETE</b>, with the CLI command that settles them, never silently passed.</p>
+      <div class="mast-meta">
+        <div><span>Toolkit</span><b>PassWrks</b></div>
+        <div><span>Checks in registry</span><b>40</b></div>
+        <div><span>Exit codes mirrored</span><b>0 · 1 · 2</b></div>
+        <div><span>Keys handled</span><b>Never in the browser</b></div>
+        <div><span>Engine parity</span><b>@erc8426/conformance 0.4.0</b></div>
+        <div><span>SDK version</span><b>0.4.0 · @erc8426/core 0.4.0</b></div>
+      </div>
+    </div>
+    <figure class="specimen" style="margin:0">
+      <div class="passcard" aria-hidden="true">
+        <div class="pass-top">
+          <div>
+            <div class="pass-org">PassWrks · Specimen, what gets checked</div>
+            <div class="pass-name">Wallet Pass</div>
+          </div>
+          <div class="pass-live"><i>●</i> LIVE STATE</div>
+        </div>
+        <div class="pass-fields">
+          <div><span>Discovery</span><b>passURI(tokenId)</b></div>
+          <div><span>Interface</span><b>0xef5f1e71</b></div>
+          <div><span>Freshness</span><b>PassUpdate event</b></div>
+          <div><span>Authorization</span><b>SIWE + owner read</b></div>
+        </div>
+        <div class="pass-bar"></div>
+        <div class="pass-foot"><span>APPLE WALLET</span><span>GOOGLE WALLET</span></div>
+      </div>
+      <figcaption>Fig. 01: The pass PassWrks vouches for</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+<!-- ══════════ §01 WORKBENCH ══════════ -->
+<section id="checker" aria-label="Checker">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">§ 01</span><h2>Run a check</h2>
+      <p>Live mode talks JSON-RPC and HTTPS straight from your browser, no server, no key, nothing stored. If an issuer blocks browser CORS, the affected checks are marked <b>skipped</b> with the exact CLI command that settles them.</p>
+    </div>
+    <div class="bench">
+      <!-- INPUT -->
+      <form class="panel" id="checkForm" novalidate>
+        <div class="panel-h"><h3>Input console</h3><span class="mono">FORM 8426-A</span></div>
+        <div class="panel-b">
+          <div class="field">
+            <label for="chainPreset">Chain preset <span class="hint">sets RPC + chain ID</span></label>
+            <select id="chainPreset">
+              <option value="base" data-chain="8453" data-rpc="https://mainnet.base.org">Base · 8453</option>
+              <option value="ethereum" data-chain="1" data-rpc="https://ethereum-rpc.publicnode.com">Ethereum · 1</option>
+              <option value="base-sepolia" data-chain="84532" data-rpc="https://sepolia.base.org">Base Sepolia · 84532</option>
+              <option value="sepolia" data-chain="11155111" data-rpc="https://ethereum-sepolia-rpc.publicnode.com">Sepolia · 11155111</option>
+              <option value="robinhood-mainnet" data-chain="4663" data-rpc="https://rpc.mainnet.chain.robinhood.com">Robinhood Chain · 4663</option>
+              <option value="robinhood-testnet" data-chain="46630" data-rpc="https://rpc.testnet.chain.robinhood.com">Robinhood Chain Testnet · 46630 · WalletChi test</option>
+              <option value="anvil" data-chain="31337" data-rpc="http://127.0.0.1:8545">Local Anvil · 31337</option>
+              <option value="custom" data-chain="" data-rpc="">Custom RPC…</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rpcUrl">RPC URL</label>
+            <input type="url" id="rpcUrl" value="https://mainnet.base.org" spellcheck="false" autocomplete="off" />
+            <div class="msg" id="rpcMsg"></div>
+          </div>
+          <div class="field">
+            <label for="contract">Contract address <span class="hint">ERC-721</span></label>
+            <input type="text" id="contract" placeholder="0x…" spellcheck="false" autocomplete="off" />
+            <div class="msg" id="contractMsg"></div>
+          </div>
+          <div class="field">
+            <label for="tokenId">Token ID <span class="hint">uint256, decimal</span></label>
+            <input type="text" id="tokenId" inputmode="numeric" placeholder="e.g. 412" spellcheck="false" autocomplete="off" />
+            <p class="field-note">In plain English: a token ID is the number of the one individual NFT you want checked. Pocket No. 042, for example, is token ID 42. You can find a token's ID on its collection page, on its marketplace listing, or on the block explorer page for that token.</p>
+            <div class="msg" id="tokenMsg"></div>
+          </div>
+          <div class="field">
+            <label>Acquisition path</label>
+            <div class="seg" role="group" aria-label="Acquisition path">
+              <button type="button" id="modePublic" aria-pressed="true">Public path</button>
+              <button type="button" id="modeGated" aria-pressed="false">Gated · owner</button>
+            </div>
+            <div class="mode-note" id="modeNote"><b>Public:</b> manifest should answer 200 to anyone. Runs contract + manifest + mirror checks.</div>
+          </div>
+          <div class="field" id="ownerField" hidden>
+            <label for="ownerAddr">Owner address <span class="hint">optional, scopes challenge checks</span></label>
+            <input type="text" id="ownerAddr" placeholder="0x… (read from ownerOf if blank)" spellcheck="false" autocomplete="off" />
+            <div class="mode-note"><b>Owner path, safely:</b> this page never asks for a private key, the SDK suite reads the owner key from an environment variable only, so it stays out of shell history and the report. Browser owner-proof checks that need a signature are marked skipped with the CLI command below. <span class="mono" id="walletState">No wallet detected.</span></div>
+          </div>
+          <button class="run-btn" id="runBtn" type="submit">Run conformance check →</button>
+          <div class="alt-actions">
+            <button class="btn" type="button" id="demoBtn">Run demo report</button>
+            <button class="btn" type="button" id="clearBtn">Clear</button>
+          </div>
+          <div class="recent" id="recentRow" aria-label="Recent checks this session"></div>
+          <details class="adv">
+            <summary>Advanced: nonexistent token &amp; offline manifest</summary>
+            <div class="field" style="margin-top:14px">
+              <label for="missingId">Nonexistent token ID <span class="hint">for the revert check</span></label>
+              <input type="text" id="missingId" placeholder="Default: max uint256" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label for="manifestPaste">Validate a manifest JSON offline</label>
+              <textarea id="manifestPaste" placeholder='{"version":1,"formats":{"apple":"https://…","google":"https://pay.google.com/gp/v/save/…"},"updatedAt":1790000000}' spellcheck="false"></textarea>
+              <div class="alt-actions">
+                <button class="btn primary" type="button" id="manifestBtn">Validate manifest only</button>
+              </div>
+              <div class="msg" id="manifestMsg"></div>
+            </div>
+          </details>
+          <div class="cli-box" id="cliBox" aria-label="Equivalent CLI command"><span class="c"># SDK 0.4.0 · The same check, as the SDK CLI (exit 0 = conforms)</span>
+npx @erc8426/conformance@0.4.0 \
+  --rpc <span id="cliRpc">https://mainnet.base.org</span> \
+  --contract <span id="cliContract">0x…</span> \
+  --token <span id="cliToken">1</span></div>
+          <div class="alt-actions">
+            <button class="btn" type="button" id="copyCliBtn">Copy CLI command</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- REPORT -->
+      <div class="panel" id="reportPanel">
+        <div class="panel-h"><h3>Conformance report</h3><span class="mono" id="reportStampLine">NO RUN YET</span></div>
+        <div class="progress-line" id="progressLine"><i></i></div>
+        <div id="reportBody">
+          <div class="report-empty">
+            <h3>The bench is clear.</h3>
+            <p>No report yet. A run takes three passes over the target:</p>
+            <ol>
+              <li><b>Contract pass</b>, ERC-165 probes and <span class="mono">passURI(tokenId)</span> reads, including the revert check on a nonexistent token.</li>
+              <li><b>Manifest pass</b>, fetch, media type, shape validation, lint, and the <span class="mono">tokenURI</span> metadata mirror.</li>
+              <li><b>Gated pass</b>, if the manifest answers 401: challenge issuance, SIWE fields, nonce freshness, and garbage-proof refusal.</li>
+            </ol>
+            <p style="margin-top:14px">New to a target? Hit <b>Run demo report</b> to see a full stamped report on specimen data first.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §02 REGISTRY ══════════ -->
+<section id="registry" aria-label="Check registry">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">§ 02</span><h2>The check registry</h2>
+      <p>Every check this workbench knows, with its stable ID, RFC 2119 level, and the spec section it enforces, the same registry the <span class="mono">@erc8426/conformance</span> CLI runs, updated for SDK 0.4.0 (@erc8426/core 0.4.0). New in 0.4.0: manifest <b>version</b> is a MUST, and the optional issuer identity commitment checks are included. A failed <b>MUST</b> means non-conforming (exit 1). A failed <b>SHOULD</b> is a warning only.</p>
+      <div class="filter-row" role="group" aria-label="Filter registry">
+        <button class="btn fbtn" data-f="all">All</button>
+        <button class="btn fbtn" data-f="Contract interface">Contract</button>
+        <button class="btn fbtn" data-f="Pass manifest">Manifest</button>
+        <button class="btn fbtn" data-f="Gated acquisition">Gated</button>
+        <button class="btn fbtn" data-f="Authorization">Authorization</button>
+        <button class="btn fbtn" data-f="Metadata mirror">Mirror</button>
+        <button class="btn fbtn" data-f="Issuer identity commitment">Issuer</button>
+      </div>
+    </div>
+    <div class="ref-wrap">
+      <table class="ref" id="refTable">
+        <thead><tr><th>Check ID</th><th>Level</th><th>Section</th><th>What it proves</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §03 READING + OWNER ══════════ -->
+<section aria-label="How to read a report">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">§ 03</span><h2>Reading a report · the owner path</h2>
+    </div>
+    <div class="cols">
+      <div class="mini-panel">
+        <span class="num-badge">VERDICTS</span>
+        <h3>How the stamp is decided</h3>
+        <ul>
+          <li><b>CONFORMS</b>, every MUST that could be observed passed. CLI exit <span class="mono">0</span>.</li>
+          <li><b>DOES NOT CONFORM</b>, at least one MUST failed. CLI exit <span class="mono">1</span>. The fix list in the report is ordered by blast radius: discovery first, then manifest, then authorization.</li>
+          <li><b>INCOMPLETE</b>, no MUST failed, but checks were skipped (CORS, gated owner proof, server-cooperation checks). Treat as “not yet proven,” not as a pass.</li>
+          <li><b>Warnings</b>, SHOULD failures: <span class="mono">updatedAt</span> in milliseconds, a Google URL that isn't a Save link, an Apple URL not served as <span class="mono">.pkpass</span>. Worth fixing, never blocking.</li>
+        </ul>
+        <p>The two checks <span class="mono">gated.expired-proof</span> and <span class="mono">gated.wrong-domain-proof</span> are <b>always skipped by design</b>, a valid expired or wrong-domain proof can't be produced without the server's cooperation, so the issuer's own tests must cover them.</p>
+      </div>
+      <div class="mini-panel">
+        <span class="num-badge">GATED · OWNER PATH</span>
+        <h3>Proving the owner flow</h3>
+        <p>A gated issuer answers <b>401</b> with <span class="mono">error: "proof_required"</span> and a challenge URI. The owner path then proves three things the public path can't:</p>
+        <ul>
+          <li><b>gated.owner-200</b>, the owner's signed ERC-4361 proof resolves the manifest.</li>
+          <li><b>gated.no-store</b>, that response carries <span class="mono">Cache-Control: no-store</span>, so a gated manifest is never cached into the wrong hands.</li>
+          <li><b>gated.replay-refused</b>, the same proof a second time is refused: nonces are single-use.</li>
+        </ul>
+        <p><b>Why the key never touches this page:</b> the suite reads it from an environment variable (<span class="mono">--owner-key-env</span>), and it signs only a challenge that names the serving host as verifier, is scoped to this token + the <span class="mono">acquire</span> action, and expires within one hour. Anything else is never signed.</p>
+        <p><b>Signature rule, SDK 0.4.0:</b> a signature that is <span class="mono">0x</span> alone, or has an odd number of hex digits, is refused with <b>401</b> and <span class="mono">error: "signature_invalid"</span>, not 400 <span class="mono">invalid_request</span>. That applies on the gated manifest route, the signed action route and the rotate route. A signature that is not <span class="mono">0x</span> prefixed hex at all is still 400 <span class="mono">invalid_request</span>.</p>
+        <div class="cli-box"><span class="c"># Owner path, the safe way (SDK 0.4.0)</span>
+export ERC8426_OWNER_KEY=0x…
+npx @erc8426/conformance@0.4.0 --rpc $RPC \
+  --contract 0x… --token 412 \
+  --owner-key-env ERC8426_OWNER_KEY</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §04 ROADMAP ══════════ -->
+<section aria-label="PassWrks toolkit roadmap">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">§ 04</span><h2>PassWrks, one toolkit, three instruments</h2>
+      <p>PassWrks is the name for the whole ERC-8426 builder toolkit. The Checker is the wedge, it tells you <i>if</i> a pass works. The next two tell you <i>why it looks wrong</i>, and <i>how to ship one</i>.</p>
+    </div>
+    <div class="road">
+      <div class="phase now">
+        <span class="mono">Phase 1 · Live, you are here</span>
+        <h3>Pass Checker</h3>
+        <p>Web conformance suite: contract + token ID in, stamped pass/fail report out, shareable route for every run. Public path first, gated owner path alongside.</p>
+      </div>
+      <div class="phase">
+        <span class="mono">Phase 2 · Next</span>
+        <h3>Preview / Debugger</h3>
+        <p>Renders the pass in-browser, Apple and Google side by side, and flags the classic gotchas before certs are paid for: missing icon, duplicate field keys, overflow fields, wrong hero ratio, non-public images.</p>
+      </div>
+      <div class="phase">
+        <span class="mono">Phase 3</span>
+        <h3>Starter Kit</h3>
+        <p>Template repo + deploy button + a credential wizard that validates the Apple Pass Type ID and Google service account as you enter them. Zero to a live pass in an afternoon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §05 HOSTED PLATFORM ══════════ -->
+<section aria-label="PassWrks hosted platform">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">§ 05</span><h2>The PassWrks platform, hosted site plan</h2>
+      <p>PassWrks grows from this single workbench into a hosted home for ERC-8426 builders. This page is the live first surface, everything below is the build order for the full site, in the order it ships.</p>
+    </div>
+    <div class="cols">
+      <div class="mini-panel">
+        <span class="num-badge">THE SITE</span>
+        <h3>What the hosted PassWrks site holds</h3>
+        <ul>
+          <li><b>Home / landing</b>, what ERC-8426 is, why wallet passes for NFTs, and a live Checker demo up front. No sign-up to run a check.</li>
+          <li><b>/checker</b>, this workbench, hosted as-is: browser-only reads, no keys, shareable <span class="mono">#/check/…</span> routes for every run.</li>
+          <li><b>/preview</b>, Phase 2 Preview / Debugger: Apple + Google render side by side with gotcha flags.</li>
+          <li><b>/starter</b>, Phase 3 Starter Kit: template repo, deploy button, and the credential wizard.</li>
+          <li><b>/registry + /docs</b>, the 40-check registry, spec notes for ERCs PR #2036, and plain-language guides for each MUST.</li>
+          <li><b>/examples</b>, real contracts tested in public, starting with the WalletChi testnet run, with their stamped verdicts shown.</li>
+        </ul>
+        <p>One rule across every surface: <b>tools for serious projects, built to last</b>, no extraction patterns, no key ever asked for in the browser.</p>
+      </div>
+      <div class="mini-panel">
+        <span class="num-badge">NAME · STATUS</span>
+        <h3>Why PassWrks, and what is still open</h3>
+        <ul>
+          <li><b>PassWrks</b>, shortened spelling, reads instantly as “pass works.” Chosen over Passifi (already a crypto token, PFI) and PassWorks (passworks.io, an existing Apple / Google Wallet pass platform since 2014).</li>
+          <li><b>Checked so far:</b> no web hits for “PassWrks”; <span class="mono">passwrks</span> free on npm; no GitHub org/user named passwrks.</li>
+          <li><b>Still to verify before launch:</b> register the domain at a registrar (availability not yet confirmed there), then claim the GitHub org and npm name under PassWrks.</li>
+          <li><b>First real test, next:</b> WalletChi on Robinhood Chain testnet, chain 46630, token ID 1 first, run it here, keep the stamped verdict, and let a clean public/gated result trigger Phase 2.</li>
+        </ul>
+        <div class="cli-box"><span class="c"># PassWrks, build order</span>
+1  Checker live        ← you are here
+2  WalletChi test      → stamped verdict
+3  Domain + org claim  → PassWrks home
+4  Preview / Debugger  → Phase 2
+5  Starter Kit         → Phase 3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §06 GLOSSARY ══════════ -->
+<section aria-label="Plain English glossary" style="border-bottom:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">§ 06</span><h2>Plain English glossary</h2>
+      <p>The main words used on this page, explained the way you would explain them to a friend. No crypto background needed.</p>
+    </div>
+    <div class="cols">
+      <div class="mini-panel">
+        <span class="num-badge">THE PASS ITSELF</span>
+        <h3>The pass and where it lives</h3>
+        <ul>
+          <li><b>ERC-8426</b>: the rulebook this page checks against. It is the standard that lets an NFT carry a pass for Apple Wallet or Google Wallet.</li>
+          <li><b>Token ID</b>: the number of one individual NFT in a collection. Pocket No. 042 is token ID 42. You can find it on the collection page, the marketplace listing, or the block explorer page for that token.</li>
+          <li><b>Contract</b>: the program on the blockchain that issued the tokens and keeps the official record of who owns each one. Every collection has one contract address.</li>
+          <li><b>passURI</b>: the question the checker asks the contract to get the web address of one token's pass file. If the contract cannot answer it, no wallet can load the pass.</li>
+          <li><b>Manifest</b>: the pass file itself, a small data file listing the download links for the Apple and Google versions of the pass, plus when it was last updated.</li>
+          <li><b>Version</b>: every manifest must carry <span class="mono">"version": 1</span>. If it is missing, wallets still read the pass as version 1, but the issuer fails the version check. If it is present and is not 1, the manifest fails.</li>
+          <li><b>tokenURI</b>: the address where an NFT's public description lives (its name, image, and details). Some issuers also keep a copy of the pass details there, and the mirror checks read that copy.</li>
+        </ul>
+      </div>
+      <div class="mini-panel">
+        <span class="num-badge">OWNERSHIP · RULEBOOK</span>
+        <h3>Proving ownership, and the rulebook</h3>
+        <ul>
+          <li><b>Gated</b>: locked to owners. A gated pass is only handed over after the visitor proves they own the token.</li>
+          <li><b>SIWE</b>: short for Sign In With Ethereum, the standard way to prove you control a wallet by signing a message. Signing is free, and it never moves your tokens.</li>
+          <li><b>Nonce</b>: a one time random code inside a sign in message. Because it changes every time, a copied proof cannot be used twice.</li>
+          <li><b>RPC</b>: the doorway this page uses to read the blockchain. The chain presets at the top of the form fill it in for you.</li>
+          <li><b>MUST and SHOULD</b>: words from the rulebook. A MUST is required, so failing one means the pass does not conform. A SHOULD is a strong recommendation, so failing one is a warning, not a failure.</li>
+          <li><b>Issuer commitment</b>: an optional promise a contract can make on chain about who signs its passes, read through <span class="mono">passIssuer()</span>. When a contract makes one, every manifest must name the same signer, member for member. When it makes none, those checks are skipped.</li>
+          <li><b>Conformance</b>: checking something against the written rules of a standard, line by line, instead of going by opinion. That is all this page does.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols2">
+      <div><b>PassWrks, ERC-8426 Pass Checker</b>, Phase 1 of the PassWrks toolkit.<br />Built on the check registry of <span class="mono">@erc8426/conformance</span> 0.4.0 from the MIT-licensed ERC-8426 SDK 0.4.0 (@erc8426/core 0.4.0).</div>
+      <div class="mono">SPEC: ERCs PR #2036 · DRAFT, breaking changes follow the spec until final.<br />SDK 0.4.0 contracts are tested, not third-party audited. Verify before production.</div>
+      <div class="mono">SOURCES<br /><a href="https://github.com/huntclubhero/erc8426-sdk" target="_blank" rel="noopener">github.com/huntclubhero/erc8426-sdk ↗</a><br /><a href="https://ethereum-magicians.org/t/erc-8426-wallet-pass-extension-for-nfts/29358" target="_blank" rel="noopener">Ethereum Magicians discussion ↗</a></div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════ Registry (mirrors @erc8426/conformance 0.4.0 README) ═══════════ */
+var REGISTRY = [
+ ["contract.erc165","MUST","Contract interface","supportsInterface(0x01ffc9a7) is true"],
+ ["contract.erc165-invalid","MUST","Contract interface","supportsInterface(0xffffffff) is false"],
+ ["contract.interface-id","MUST","Contract interface","supportsInterface(0xef5f1e71) is true, the ERC-8426 interface"],
+ ["issuer.commitment","MUST","Issuer identity commitment","Only for a contract whose supportsInterface(0x470be7e9) is true (the interface is optional, skipped otherwise): passIssuer() returns a JSON object with the shape of the manifest issuer member. A supportsInterface read that fails is a failure, not a skip"],
+ ["contract.passuri","MUST","Contract interface","passURI(tokenId) returns a URI"],
+ ["contract.passuri-nonexistent","MUST","Contract interface","passURI reverts for a nonexistent token"],
+ ["manifest.reachable","MUST","Pass manifest","The endpoint answers 200 (public) or 401 (gated)"],
+ ["manifest.media-type","MUST","Pass manifest","The manifest is served as application/json"],
+ ["manifest.valid","MUST","Pass manifest","Non-empty formats, https acquisition URLs, updatedAt in integer seconds; a version other than 1 fails"],
+ ["manifest.version","MUST","Pass manifest","The manifest carries version 1 (version is REQUIRED and is the integer 1). A client reads an absent version as 1, so the other manifest checks still run, but the issuer that omits it fails this check"],
+ ["manifest.issuer-commitment","MUST","Issuer identity commitment","When the contract commits: the manifest carries issuer, equal member for member to passIssuer()"],
+ ["manifest.lint","SHOULD","Pass manifest","Likely mistakes: updatedAt in milliseconds, a google URL that is not a Save link"],
+ ["manifest.apple-media-type","SHOULD","Pass manifest","The apple URL is served as application/vnd.apple.pkpass"],
+ ["manifest.apple-reachable","SHOULD","Pass manifest","Reported only when the apple URL cannot be fetched"],
+ ["gated.manifest.version","MUST","Pass manifest","On the owner's gated manifest: the manifest carries version 1 (version is REQUIRED and is the integer 1). A client reads an absent version as 1, so the other manifest checks still run"],
+ ["gated.manifest.issuer-commitment","MUST","Issuer identity commitment","On the owner's gated manifest: when the contract commits, the manifest carries issuer, equal member for member to passIssuer()"],
+ ["mirror.valid","MUST","Metadata mirror","A wallet_pass in tokenURI metadata is a valid manifest"],
+ ["mirror.gated-no-urls","MUST","Metadata mirror","A gated issuer mirrors no acquisition URLs"],
+ ["gated.401-proof-required","MUST","Gated acquisition","No proof: 401, error proof_required, a challenge URI"],
+ ["gated.401-no-urls","MUST","Gated acquisition","The 401 body carries no acquisition URLs"],
+ ["challenge.missing-address","MUST","Gated acquisition","Challenge endpoint answers 400 without address"],
+ ["challenge.invalid-address","MUST","Gated acquisition","Challenge endpoint answers 400 for an invalid address"],
+ ["challenge.issued","MUST","Gated acquisition","A JSON body with a message for a valid address"],
+ ["challenge.siwe","SHOULD","Authorization","The challenge is an ERC-4361 (SIWE) message"],
+ ["challenge.domain","MUST","Authorization","The verifier identity (domain) is present"],
+ ["challenge.domain-host","SHOULD","Authorization","The domain is the serving host, so clients can check it"],
+ ["challenge.address","MUST","Authorization","The claimed account echoes the request"],
+ ["challenge.chain-id","MUST","Authorization","The chain id is the token's chain"],
+ ["challenge.nonce","MUST","Authorization","A nonce is present"],
+ ["challenge.expiration","MUST","Authorization","An Expiration Time in the future"],
+ ["challenge.token-resource","MUST","Authorization","The first resource is this token's CAIP-19 id"],
+ ["challenge.action-resource","MUST","Authorization","The action resource is urn:wallet-pass:action:acquire"],
+ ["challenge.fresh-nonce","MUST","Gated acquisition","Two challenge requests yield two nonces"],
+ ["gated.garbage-proof","MUST","Gated acquisition","A garbage proof is refused, and not with 403. A signature that is 0x alone, or has an odd number of hex digits, is refused with 401 signature_invalid, not 400 invalid_request, on the gated manifest, signed action and rotate routes"],
+ ["gated.non-owner-403","MUST","Gated acquisition","A valid proof from a fresh non-owner key gets exactly 403"],
+ ["gated.owner-200","MUST","Gated acquisition","The owner's proof resolves the manifest (owner key required)"],
+ ["gated.no-store","MUST","Gated acquisition","The verified response has Cache-Control: no-store"],
+ ["gated.replay-refused","MUST","Gated acquisition","The same proof a second time is refused, and not with 403"],
+ ["gated.expired-proof","MUST","Authorization","An expired proof is refused, always skipped: cannot be produced without the server"],
+ ["gated.wrong-domain-proof","MUST","Authorization","A proof naming another verifier is refused, always skipped: cannot be produced without the server"]
+];
+var GROUPS = [
+ ["A · Contract interface", function(id){return id.indexOf("contract.")===0||id.indexOf("issuer.")===0;}],
+ ["B · Pass manifest", function(id){return id.indexOf("manifest.")===0;}],
+ ["C · Metadata mirror", function(id){return id.indexOf("mirror.")===0;}],
+ ["D · Gated acquisition & challenge", function(id){return id.indexOf("gated.")===0||id.indexOf("challenge.")===0;}]
+];
+var FIXES = {
+ "contract.erc165":"Implement ERC-165: supportsInterface must answer for 0x01ffc9a7 itself.",
+ "contract.erc165-invalid":"supportsInterface(0xffffffff) must return false, a common copy-paste bug is returning true for everything.",
+ "contract.interface-id":"Inherit ERC721WalletPass from @erc8426/contracts, or report 0xef5f1e71 in supportsInterface.",
+ "contract.passuri":"Set a pass base URI (_setPassBaseURI). passURI reverts while no base is set, by design.",
+ "contract.passuri-nonexistent":"passURI must revert for tokens that don't exist, check existence before concatenating the base URI.",
+ "manifest.reachable":"Point passURI at a live issuer route (e.g. /wallet-pass/{tokenId}) that answers 200 public or 401 gated.",
+ "manifest.media-type":"Serve the manifest with Content-Type: application/json.",
+ "manifest.valid":"Fix the manifest shape: non-empty formats object, https acquisition URLs only, updatedAt as integer seconds, and a version that is understood (1).",
+ "manifest.version":"Add \"version\": 1 to the manifest. Version is REQUIRED in SDK 0.4.0. A missing version fails this check, and a version that is not 1 also fails.",
+ "gated.manifest.version":"Add \"version\": 1 to the gated manifest. Version is REQUIRED in SDK 0.4.0. A missing version fails this check, and a version that is not 1 also fails.",
+ "issuer.commitment":"If the contract reports supportsInterface(0x470be7e9), passIssuer() must return a JSON object with the shape of the manifest issuer member (apple teamIdentifier and passTypeIdentifier, google issuerId). If the contract makes no commitment, remove the interface report instead.",
+ "manifest.issuer-commitment":"Add an issuer member to the manifest that equals passIssuer() member for member, or update both together so they match.",
+ "gated.manifest.issuer-commitment":"Add an issuer member to the gated manifest that equals passIssuer() member for member, or update both together so they match.",
+ "manifest.lint":"Tidy the manifest: seconds not milliseconds, and a real Save to Google Wallet link.",
+ "gated.401-proof-required":"A gated issuer must answer 401 with error proof_required and a challenge URI when no proof is presented.",
+ "gated.401-no-urls":"Never leak acquisition URLs in the 401 body, they are the thing the gate protects.",
+ "challenge.issued":"The challenge endpoint must return a JSON body with a message for a valid address.",
+ "challenge.domain":"The SIWE challenge must name its verifier (domain).",
+ "challenge.expiration":"Include an Expiration Time in the future (and at most one hour ahead for owner signing).",
+ "challenge.token-resource":"First SIWE resource must be the token's CAIP-19 id: eip155:{chainId}/erc721:{contract}/{tokenId}.",
+ "challenge.action-resource":"Second SIWE resource must be urn:wallet-pass:action:acquire.",
+ "gated.garbage-proof":"Refuse malformed proofs without using 403, which is reserved for a valid proof from a non-owner. In SDK 0.4.0, a signature that is 0x alone, or has an odd number of hex digits, must be refused with 401 signature_invalid, not 400 invalid_request, on the gated manifest, signed action and rotate routes.",
+ "mirror.valid":"If tokenURI metadata carries a wallet_pass key, it must be a valid manifest, or drop the key.",
+ "mirror.gated-no-urls":"A gated collection must not mirror acquisition URLs into public tokenURI metadata."
+};
+function fixFor(id){ if(FIXES[id]) return FIXES[id]; if(id.indexOf("challenge.")===0) return "Align the challenge response with ERC-4361: domain, address, chain id, nonce, expiration, and both resources."; if(id.indexOf("gated.")===0) return "Check the issuer's gated configuration and proof verification floor (fresh ownership read + signed challenge)."; if(id.indexOf("manifest.")===0) return "Check the issuer's manifest rendering against the PassManifest shape in @erc8426/core."; return "See the spec section for this check in the registry below."; }
+
+/* Plain English: what each check means in everyday words */
+var PLAIN = {
+ "contract.erc165":"This asks the contract a basic identity question, the standard way contracts say what they can do. A pass contract has to answer yes.",
+ "contract.erc165-invalid":"This asks the contract about a made up feature that does not exist. An honest contract says no, which proves it is not just answering yes to everything.",
+ "contract.interface-id":"This checks the contract officially supports ERC-8426, the wallet pass standard, so wallets and apps can recognize it as a pass.",
+ "issuer.commitment":"This checks whether the contract has promised on chain who signs its passes. That promise is optional. If the contract makes it, this reads the promised signer details and checks they are in the right shape. If it makes no promise, this check is skipped. If the question itself cannot be read, that is a failure, not a skip.",
+ "contract.passuri":"This asks the contract for the web address where this token's pass file lives. Without it, no wallet can find or load the pass.",
+ "contract.passuri-nonexistent":"This asks for a pass for a token that does not exist. The contract should refuse, which proves it cannot be tricked into making passes for tokens that were never issued.",
+ "manifest.reachable":"This visits the pass address to see if the issuer's server answers at all, either openly, or with a locked door that asks for proof of ownership.",
+ "manifest.media-type":"This checks the pass file is labeled as the right kind of data (JSON), so wallets and apps read it correctly instead of guessing.",
+ "manifest.valid":"This reads the pass file itself and checks it is filled in correctly, with working download links for the wallet passes and a proper last updated time. A version that is present and is not 1 also fails here, because a wallet must not act on a version it does not understand.",
+ "manifest.version":"This checks the pass file carries version 1. The version field is now required. If it is missing, wallets still read the pass as version 1 and the other checks still run, but the issuer fails this check. If it is present and is not 1, this check fails too.",
+ "gated.manifest.version":"This is the same version check, run on the locked pass file that only the owner can open. The gated pass file must also carry version 1. It needs the owner proof, so it runs in the command line tool when the browser cannot open the gated file.",
+ "manifest.issuer-commitment":"When the contract has promised who signs its passes, this checks the pass file names that exact same signer, detail for detail. If the contract made no promise, this check is skipped.",
+ "gated.manifest.issuer-commitment":"This is the same signer match check, run on the locked pass file that only the owner can open. It needs the owner proof, so it runs in the command line tool when the browser cannot open the gated file. If the contract made no promise, this check is skipped.",
+ "manifest.lint":"This looks for small, common slip ups in the pass file, like a timestamp written in the wrong unit. These do not break the pass, but they are worth tidying. Version is no longer part of this tidy up check, because version is now a required check of its own.",
+ "manifest.apple-media-type":"This checks the Apple pass download is labeled as a real Apple Wallet pass file, so iPhones accept it.",
+ "manifest.apple-reachable":"This checks the Apple pass download link actually works, so iPhone owners are not sent to a dead end.",
+ "mirror.valid":"This checks the copy of the pass details stored in the NFT's public metadata. If a copy is there, it has to be correct, so marketplaces and wallets show the right thing.",
+ "mirror.gated-no-urls":"For passes that are locked to owners, this checks the public metadata does not give away the private download links. Anyone can read metadata, so the links must stay behind the lock.",
+ "gated.401-proof-required":"This visits a locked pass without proving ownership. The server should turn it away and offer a way to prove ownership, like a bouncer asking for ID.",
+ "gated.401-no-urls":"When the server turns a visitor away, this checks it does not accidentally include the private download links in that refusal.",
+ "challenge.missing-address":"This asks for an ownership challenge without saying which wallet is asking. The server should reject the request as incomplete.",
+ "challenge.invalid-address":"This asks for a challenge using a wallet address that is not real. The server should reject it instead of issuing a challenge to nobody.",
+ "challenge.issued":"This asks the server for a sign in message for a real wallet address. Getting one proves the ownership check flow is switched on.",
+ "challenge.siwe":"This checks the sign in message follows the standard Sign In With Ethereum format, the same style most web3 sites use, so wallets know how to handle it.",
+ "challenge.domain":"This checks the sign in message names the website or service asking for the signature, so owners can see who they are proving ownership to.",
+ "challenge.domain-host":"This checks the name in the sign in message matches the website actually serving the pass, which helps owners spot a fake site pretending to be the issuer.",
+ "challenge.address":"This checks the sign in message repeats back the wallet address that asked, so a challenge meant for one person cannot be handed to someone else.",
+ "challenge.chain-id":"This checks the sign in message names the right blockchain network, so a proof made for one network cannot be used on another.",
+ "challenge.nonce":"This checks the sign in message includes a one time random code. That code is what stops someone copying an old proof and using it again.",
+ "challenge.expiration":"This checks the sign in message has an expiry time in the future, so owners get a fair window to sign, and old messages stop working.",
+ "challenge.token-resource":"This checks the sign in message names this exact token, so the proof only works for this one pass and not for any other NFT.",
+ "challenge.action-resource":"This checks the sign in message says what the proof is for (getting the pass), so it cannot be reused for a different action.",
+ "challenge.fresh-nonce":"This asks for two challenges and checks each one has a different random code, so every sign in attempt is unique.",
+ "gated.garbage-proof":"This sends a nonsense proof of ownership. The server should refuse it, which proves it is actually checking proofs instead of letting everyone in. One detail changed in SDK 0.4.0: a signature that is just 0x, or has an odd number of hex digits, counts as an invalid signature and gets a 401 answer, not a 400 bad request answer. That rule covers the gated pass file, signed actions and pass rotation.",
+ "gated.non-owner-403":"This sends a genuine proof from a wallet that does not own the token. The server should refuse it with the specific answer that means: valid proof, wrong owner.",
+ "gated.owner-200":"This is the real test of a locked pass: the actual owner signs the proof and the server hands over the pass file. It needs the owner's key, so it runs in the command line tool, not in the browser.",
+ "gated.no-store":"Once the owner gets in, this checks the server tells browsers not to save a copy of the private pass file, so it cannot leak from a shared or cached copy.",
+ "gated.replay-refused":"This uses the exact same owner proof a second time. The server should refuse it, which proves each proof works only once.",
+ "gated.expired-proof":"This would test that an out of date proof is refused. It cannot be run from the browser, because making an expired proof needs the server's help, so the issuer's own tests cover it.",
+ "gated.wrong-domain-proof":"This would test that a proof naming a different website is refused. It cannot be run from the browser, because it needs the server's help, so the issuer's own tests cover it."
+};
+
+/* ═══════════ DOM helpers ═══════════ */
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+var toastTimer=null;
+function toast(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove("show");},2600); }
+function copyText(txt,label){ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){toast(label||"Copied");},function(){fallbackCopy(txt,label);}); } else fallbackCopy(txt,label); }
+function fallbackCopy(txt,label){ var ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); toast(label||"Copied");}catch(e){toast("Copy failed. Select the text manually");} document.body.removeChild(ta); }
+
+/* ═══════════ Registry table ═══════════ */
+(function(){
+  var tb=document.querySelector("#refTable tbody"); var html="";
+  REGISTRY.forEach(function(r){ html+='<tr data-sec="'+esc(r[2])+'"><td class="id">'+esc(r[0])+'</td><td class="lvl">'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td></tr>'; });
+  tb.innerHTML=html;
+  var btns=document.querySelectorAll(".fbtn");
+  btns.forEach(function(b){ b.addEventListener("click",function(){
+    btns.forEach(function(x){x.classList.remove("primary");}); b.classList.add("primary");
+    var f=b.getAttribute("data-f");
+    tb.querySelectorAll("tr").forEach(function(tr){ tr.style.display=(f==="all"||tr.getAttribute("data-sec")===f)?"":"none"; });
+  });});
+  document.querySelector('.fbtn[data-f="all"]').classList.add("primary");
+})();
+
+/* ═══════════ Form state ═══════════ */
+var mode="public";
+function setMode(m){ mode=m; $("modePublic").setAttribute("aria-pressed", m==="public"?"true":"false"); $("modeGated").setAttribute("aria-pressed", m==="gated"?"true":"false"); $("ownerField").hidden = m!=="gated";
+  $("modeNote").innerHTML = m==="public" ? "<b>Public:</b> manifest should answer 200 to anyone. Runs contract + manifest + mirror checks." : "<b>Gated:</b> manifest should answer 401 without proof. Runs the contract + challenge probes; owner-proof checks need the CLI env-key flow and are reported as skipped with the command.";
+  syncCli(); }
+$("modePublic").addEventListener("click",function(){setMode("public");});
+$("modeGated").addEventListener("click",function(){setMode("gated");});
+$("chainPreset").addEventListener("change",function(){ var o=this.options[this.selectedIndex]; var rpc=o.getAttribute("data-rpc"); if(rpc) $("rpcUrl").value=rpc; validateAll(false); syncCli(); });
+["rpcUrl","contract","tokenId"].forEach(function(id){ $(id).addEventListener("input",function(){ validateAll(false); syncCli(); }); });
+
+function isAddress(v){ return /^0x[0-9a-fA-F]{40}$/.test(v||""); }
+function validateAll(show){
+  var c=$("contract").value.trim(), t=$("tokenId").value.trim(), rpc=$("rpcUrl").value.trim(), ok=true;
+  var cm=$("contractMsg"), tm=$("tokenMsg"), rm=$("rpcMsg");
+  if(!c){ cm.textContent= show?"Required, the ERC-721 contract that should expose passURI.":""; cm.className="msg"; if(show)ok=false; }
+  else if(!isAddress(c)){ cm.textContent="Not a valid address, expected 0x + 40 hex characters."; cm.className="msg err"; ok=false; }
+  else { var mixed=/[a-f]/.test(c.slice(2))&&/[A-F]/.test(c.slice(2)); cm.textContent= mixed?"Address format valid. (Mixed case, checksum is verified by the chain read, not here.)":"Address format valid."; cm.className="msg ok"; }
+  if(!t){ tm.textContent= show?"Required.":""; tm.className="msg"; if(show)ok=false; }
+  else if(!/^\d+$/.test(t)){ tm.textContent="Token ID must be a decimal uint256, digits only."; tm.className="msg err"; ok=false; }
+  else { try{ var b=BigInt(t); if(b<0n||b>=(1n<<256n)){ tm.textContent="Out of uint256 range."; tm.className="msg err"; ok=false; } else { tm.textContent="uint256 OK."; tm.className="msg ok"; } }catch(e){ tm.textContent="Not a valid integer."; tm.className="msg err"; ok=false; } }
+  if(!rpc){ rm.textContent= show?"Required, presets fill this in.":""; rm.className="msg"; if(show)ok=false; }
+  else if(!/^https?:\/\/.+/.test(rpc)){ rm.textContent="RPC must be an http(s) URL."; rm.className="msg err"; ok=false; }
+  else { rm.textContent=""; rm.className="msg"; }
+  return ok;
+}
+function cliCommand(){
+  var rpc=$("rpcUrl").value.trim()||"$RPC", c=$("contract").value.trim()||"0x…", t=$("tokenId").value.trim()||"1";
+  var base="npx @erc8426/conformance@0.4.0 --rpc "+rpc+" --contract "+c+" --token "+t;
+  if(mode==="gated") base+=" --owner-key-env ERC8426_OWNER_KEY";
+  var miss=$("missingId").value.trim(); if(miss) base+=" --nonexistent-token "+miss;
+  return base;
+}
+function syncCli(){ var rpc=$("rpcUrl").value.trim(), c=$("contract").value.trim(), t=$("tokenId").value.trim();
+  $("cliRpc").textContent=rpc||"…"; $("cliContract").textContent=c||"0x…"; $("cliToken").textContent=t||"1"; }
+$("copyCliBtn").addEventListener("click",function(){ copyText(cliCommand(),"CLI command copied"); });
+syncCli();
+if(window.ethereum){ $("walletState").textContent="Injected wallet detected, note it is never asked to sign by this page in Phase 1; owner proofs run via the CLI flow."; }
+
+/* share-route restore: #/check/eip155:{chain}/{contract}/{token}?mode=public */
+(function(){ try{
+  var h=window.location.hash||""; var m=h.match(/#\/check\/eip155:(\d+)\/(0x[0-9a-fA-F]{40})\/(\d+)(?:\?mode=(public|gated))?/);
+  if(m){ $("tokenId").value=m[3]; $("contract").value=m[2]; if(m[4]) setMode(m[4]);
+    var sel=$("chainPreset"); for(var i=0;i<sel.options.length;i++){ if(sel.options[i].getAttribute("data-chain")===m[1]){ sel.selectedIndex=i; var r=sel.options[i].getAttribute("data-rpc"); if(r) $("rpcUrl").value=r; break; } }
+    validateAll(false); syncCli(); toast("Restored a shared check, press Run to execute it"); }
+ }catch(e){} })();
+
+/* ═══════════ JSON-RPC + ABI helpers ═══════════ */
+function rpcCall(rpc, method, params){
+  var ctrl=new AbortController(); var to=setTimeout(function(){ctrl.abort();},15000);
+  return fetch(rpc,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:method,params:params}),signal:ctrl.signal})
+    .then(function(r){ clearTimeout(to); if(!r.ok) throw new Error("RPC HTTP "+r.status); return r.json(); })
+    .then(function(j){ if(j.error) throw new Error(j.error.message||"RPC error"); return j.result; });
+}
+function ethCall(rpc,to,data){ return rpcCall(rpc,"eth_call",[{to:to,data:data},"latest"]); }
+function pad256(hexNoPrefix){ return hexNoPrefix.padStart(64,"0"); }
+function encUint(v){ return pad256(BigInt(v).toString(16)); }
+function encSupports(iface){ return "0x01ffc9a7"+iface.slice(2).padEnd(64,"0"); }
+function decodeBool(hex){ if(!hex||hex==="0x") return null; return BigInt(hex)!==0n; }
+function decodeString(hex){
+  if(!hex||hex==="0x") return null; var h=hex.slice(2); if(h.length<128) return null;
+  var len=parseInt(h.slice(64,128),16); var bytes=[]; var data=h.slice(128,128+len*2);
+  for(var i=0;i<data.length;i+=2) bytes.push(parseInt(data.slice(i,i+2),16));
+  try{ return new TextDecoder().decode(new Uint8Array(bytes)); }catch(e){ return null; }
+}
+function resolveUri(uri, ipfsGw){
+  if(!uri) return null;
+  if(uri.indexOf("ipfs://")===0) return (ipfsGw||"https://ipfs.io/ipfs/")+uri.slice(7);
+  if(uri.indexOf("ar://")===0) return "https://arweave.net/"+uri.slice(5);
+  return uri;
+}
+function fetchWithTimeout(url,opts){
+  var ctrl=new AbortController(); var to=setTimeout(function(){ctrl.abort();},15000);
+  var o=opts||{}; o.signal=ctrl.signal;
+  return fetch(url,o).then(function(r){ clearTimeout(to); return r; },function(e){ clearTimeout(to); throw e; });
+}
+
+/* ═══════════ Manifest validation (port of @erc8426/core 0.4.0 parseManifest) ═══════════ */
+var GOOGLE_PREFIX="https://pay.google.com/gp/v/save/";
+function isPlainObj(v){ return typeof v==="object"&&v!==null&&!Array.isArray(v); }
+/* Shape of the manifest issuer member, and of the object passIssuer() returns:
+   format keys to objects of string members. Apple is defined by its
+   teamIdentifier and passTypeIdentifier members, google by its issuerId. */
+function parsePassIssuer(value,path){
+  path=path||"issuer"; var issues=[]; var out={};
+  if(!isPlainObj(value)){ issues.push({level:"error",path:path,message:"issuer must be an object whose keys are format keys"}); return {ok:false,issues:issues,issuer:null}; }
+  Object.keys(value).forEach(function(format){
+    var members=value[format], at=path+"."+format;
+    if(!isPlainObj(members)){ issues.push({level:"error",path:at,message:"each issuer value must be an object of string members"}); return; }
+    var clean={};
+    Object.keys(members).forEach(function(name){
+      if(typeof members[name]!=="string") issues.push({level:"error",path:at+"."+name,message:"issuer members must be strings"});
+      else clean[name]=members[name];
+    });
+    var required = format==="apple" ? ["teamIdentifier","passTypeIdentifier"] : (format==="google" ? ["issuerId"] : []);
+    required.forEach(function(name){ if(!Object.prototype.hasOwnProperty.call(members,name)) issues.push({level:"error",path:at+"."+name,message:"issuer."+format+" is defined by its "+name+" member, which is missing"}); });
+    out[format]=clean;
+  });
+  var ok=!issues.length;
+  return {ok:ok,issues:issues,issuer:ok?out:null};
+}
+function parsePassIssuerJson(text){
+  var value; try{ value=JSON.parse(text); }catch(e){ return {ok:false,issues:[{level:"error",path:"passIssuer",message:"passIssuer() must return a JSON object"}],issuer:null}; }
+  var r=parsePassIssuer(value,"passIssuer"); return r;
+}
+/* Member for member comparison, as the standard asks. Returns the paths that differ. */
+function diffPassIssuer(a,b){
+  var diffs=[]; if(!a||!b) return ["issuer"];
+  var formats={}; Object.keys(a).forEach(function(k){formats[k]=1;}); Object.keys(b).forEach(function(k){formats[k]=1;});
+  Object.keys(formats).sort().forEach(function(format){
+    var left=a[format], right=b[format];
+    if(!left||!right){ diffs.push(format); return; }
+    var names={}; Object.keys(left).forEach(function(k){names[k]=1;}); Object.keys(right).forEach(function(k){names[k]=1;});
+    Object.keys(names).sort().forEach(function(name){ if(!Object.prototype.hasOwnProperty.call(left,name)||!Object.prototype.hasOwnProperty.call(right,name)||left[name]!==right[name]) diffs.push(format+"."+name); });
+  });
+  return diffs;
+}
+/* SDK 0.4.0 version rule, as its own MUST check: fails when version is absent,
+   and fails when version is present and is not 1. Kept separate from
+   parseManifest so a manifest without version still parses below. */
+function manifestVersionStatus(raw){
+  if(!isPlainObj(raw)) return {status:"fail",detail:"Manifest is not a JSON object, so no version can be read"};
+  if(raw.version===undefined) return {status:"fail",detail:"version is absent; add \"version\": 1. A client reads the absence as 1, so the other manifest checks still run"};
+  if(raw.version!==1) return {status:"fail",detail:"version is "+JSON.stringify(raw.version)+", must be 1"};
+  return {status:"pass",detail:"version: 1"};
+}
+/* SDK 0.4.0 signature rule: 0x alone, or an odd number of hex digits, is a
+   signature that cannot be valid, answered 401 signature_invalid, not 400
+   invalid_request. A value that is not 0x prefixed hex at all stays 400. */
+function isOddOrEmptyHexSignature(sig){
+  if(typeof sig!=="string") return false;
+  if(sig==="0x") return true;
+  if(!/^0x[0-9a-fA-F]+$/.test(sig)) return false;
+  return ((sig.length-2)%2)===1;
+}
+function expectedSignatureRefusal(sig){
+  if(isOddOrEmptyHexSignature(sig)) return {status:401,error:"signature_invalid"};
+  if(typeof sig!=="string"||!/^0x[0-9a-fA-F]*$/.test(sig)) return {status:400,error:"invalid_request"};
+  return null;
+}
+function parseManifest(value){
+  var issues=[];
+  function err(path,message){ issues.push({level:"error",path:path,message:message}); }
+  function warn(path,message){ issues.push({level:"warning",path:path,message:message}); }
+  if(typeof value!=="object"||value===null||Array.isArray(value)){ err("","manifest must be a JSON object"); return {ok:false,issues:issues,manifest:null}; }
+  var formats=value.formats; var out={};
+  if(typeof formats!=="object"||formats===null||Array.isArray(formats)){ err("formats","formats is REQUIRED and must be an object"); }
+  else{
+    var keys=Object.keys(formats);
+    if(keys.length===0) err("formats","formats MUST contain at least one entry");
+    keys.forEach(function(key){
+      var url=formats[key], path="formats."+key;
+      if(typeof url!=="string"||!url){ err(path,"each format value must be an acquisition URL string"); return; }
+      var parsed; try{ parsed=new URL(url); }catch(e){ err(path,"acquisition URL is not an absolute URL"); return; }
+      var devHttp=parsed.protocol==="http:"&&(parsed.hostname==="localhost"||parsed.hostname==="127.0.0.1");
+      if(parsed.protocol!=="https:"&&!devHttp){ err(path,"acquisition URL must be https (http only on localhost)"); return; }
+      if(key==="google"&&url.indexOf(GOOGLE_PREFIX)!==0) warn(path,"the google URL is not a Save to Google Wallet link; the standard does not require one, but check that it reaches Google Wallet");
+      out[key]=url;
+    });
+  }
+  if(value.updatedAt!==undefined){
+    var u=value.updatedAt;
+    if(typeof u!=="number"||!Number.isSafeInteger(u)||u<0) err("updatedAt","updatedAt MUST be a Unix timestamp in integer seconds");
+    else if(u>253402300799) warn("updatedAt","updatedAt looks like milliseconds; the standard uses seconds");
+  }
+  /* Version in the shape check (0.4.0): an absent version is read as 1, so it
+     is NOT an error here and the manifest still parses; the absence is failed
+     by the separate manifest.version MUST check. A present version that is
+     not 1 IS an error here: a client MUST NOT act on a version it does not
+     understand. Version no longer appears in lint. */
+  var version;
+  if(value.version!==undefined){
+    var v=value.version;
+    if(typeof v!=="number"||!Number.isSafeInteger(v)||v<1) err("version","version MUST be the integer 1");
+    else if(v!==1) err("version","manifest version "+v+" is not understood by this checker (1); a client MUST NOT act on it");
+    else version=v;
+  }
+  /* Issuer is OPTIONAL, and the standard gives a client no rule for one that
+     is malformed, so a malformed member is dropped with a warning, matching
+     @erc8426/core 0.4.0, and the manifest reads as one that carries none. */
+  var issuer;
+  if(value.issuer!==undefined){
+    var ip=parsePassIssuer(value.issuer,"issuer");
+    if(ip.ok) issuer=ip.issuer;
+    else ip.issues.forEach(function(i){ warn(i.path,i.message+"; the issuer member is ignored"); });
+  }
+  var ok=!issues.some(function(i){return i.level==="error";});
+  var manifest=null;
+  if(ok){ manifest={formats:out}; if(value.updatedAt!==undefined) manifest.updatedAt=value.updatedAt; if(version!==undefined) manifest.version=version; if(issuer!==undefined) manifest.issuer=issuer; }
+  return {ok:ok,issues:issues,manifest:manifest};
+}
+
+/* ═══════════ Report rendering ═══════════ */
+var lastReport=null, recentRuns=[];
+function titleOf(id){ for(var i=0;i<REGISTRY.length;i++) if(REGISTRY[i][0]===id) return REGISTRY[i]; return [id,"MUST","",""]; }
+function plainSummaryHtml(rep){
+  var s=rep.summary, total=rep.checks.length;
+  function n(num,word){ return num+" "+word+(num===1?"":"s"); }
+  var passed=n(s.pass,"check")+" of "+total+" passed.";
+  if(s.warn) passed+=" "+n(s.warn,"check")+" passed with a warning, which means a recommended tidy up, not a failure.";
+  if(rep.sample) passed="This is the sample report, so these results use specimen data rather than a live pass. "+passed;
+  var failed;
+  if(s.fail) failed=n(s.fail,"check")+" failed. These are the results that matter most, and they are collected in the Fix first list further down, in the order to fix them.";
+  else failed="Nothing failed. Every check that ran met the rules of the standard.";
+  var next;
+  if(s.fail) next="Work through the Fix first list below, starting at the top, or send it to the team that issued this pass. Then run the check again to confirm the fixes.";
+  else if(s.skip) next=n(s.skip,"check")+" could not be finished from the browser, usually because they need the owner's key, or the issuer's server would not answer the browser. The pass is not fully proven yet. The command line version shown under the form can finish those checks.";
+  else next="Nothing needs doing. If you want a record, download the report or copy the share route below.";
+  return '<div class="plain-summary"><h4>In plain English</h4>'
+    +'<p><b>What passed:</b> '+esc(passed)+'</p>'
+    +'<p><b>What failed:</b> '+esc(failed)+'</p>'
+    +'<p><b>What to do next:</b> '+esc(next)+'</p></div>';
+}
+function renderReport(rep){
+  lastReport=rep;
+  var body=$("reportBody"); var html="";
+  if(rep.sample) html+='<div class="sample-banner">Sample report, specimen data, not a live chain check</div>';
+  var verdictCls = rep.summary.fail>0 ? "fail" : (rep.summary.skip>0||rep.summary.warn>0 ? "partial" : "pass");
+  var verdictTxt = rep.sample ? "Sample" : (rep.summary.fail>0 ? "Does not conform" : (rep.summary.skip>0 ? "Incomplete" : "Conforms"));
+  if(rep.sample) verdictCls="sample";
+  html+='<div class="verdict"><div class="stamp '+verdictCls+'">'+esc(verdictTxt)+'</div><div class="verdict-meta">Configuration: <b>'+esc(rep.configuration)+'</b> · Exit-code equivalent: <b>'+(rep.summary.fail>0?"1":"0")+'</b><br/>Checked '+esc(rep.when)+' · Block '+esc(rep.block==null?"n/a":rep.block)+'</div></div>';
+  html+='<div class="counts"><div><b>'+rep.summary.pass+'</b><span>Pass</span></div><div><b style="color:var(--red)">'+rep.summary.fail+'</b><span>Fail (MUST)</span></div><div><b style="color:var(--amber)">'+rep.summary.warn+'</b><span>Warn (SHOULD)</span></div><div><b>'+rep.summary.skip+'</b><span>Skipped</span></div></div>';
+  html+=plainSummaryHtml(rep);
+  html+='<table class="meta-table"><tbody>'
+    +'<tr><th>Contract</th><td>'+esc(rep.contract)+'<button class="copy-btn" data-copy="'+esc(rep.contract)+'">COPY</button></td></tr>'
+    +'<tr><th>Token ID</th><td>'+esc(rep.tokenId)+'</td></tr>'
+    +'<tr><th>Chain ID</th><td>'+esc(rep.chainId==null?"unknown":rep.chainId)+'</td></tr>'
+    +'<tr><th>Owner (ownerOf)</th><td>'+esc(rep.owner||"n/a")+'</td></tr>'
+    +'<tr><th>passURI</th><td>'+esc(rep.passUri||"n/a")+(rep.passUri?'<button class="copy-btn" data-copy="'+esc(rep.passUri)+'">COPY</button>':"")+'</td></tr>'
+    +'<tr><th>Manifest URL</th><td>'+esc(rep.manifestUrl||"n/a")+'</td></tr>'
+    +'</tbody></table>';
+  /* fix list */
+  var failed=rep.checks.filter(function(c){return c.status==="fail";});
+  if(failed.length){ html+='<div class="fixbox"><h4>Fix first, in this order</h4><ol style="margin:0;padding-left:20px">'; failed.forEach(function(c){ html+='<li><span class="mono">'+esc(c.id)+'</span>, '+esc(fixFor(c.id))+'</li>'; }); html+='</ol></div>'; }
+  /* groups */
+  var rendered={};
+  GROUPS.forEach(function(g){
+    var rows=rep.checks.filter(function(c){return g[1](c.id);});
+    if(!rows.length) return;
+    html+='<div class="group-h"><h4>'+esc(g[0])+'</h4><span class="mono">'+rows.filter(function(r){return r.status==="pass";}).length+'/'+rows.length+' pass</span></div>';
+    rows.forEach(function(c){ rendered[c.id]=1;
+      var reg=titleOf(c.id);
+      var pill = c.status==="pass"?"PASS":c.status==="fail"?"FAIL":(c.level==="SHOULD"&&c.status==="warn")?"WARN":"SKIP";
+      var pillCls = c.status==="pass"?"pass":c.status==="fail"?"fail":(c.level==="SHOULD"&&c.status==="warn")?"warn":"skip";
+      html+='<div class="check"><div class="pill '+pillCls+'">'+pill+'</div><div><span class="cid">'+esc(c.id)+'</span><span class="lvl">'+esc(c.level)+' · '+esc(reg[2])+'</span><div class="ctitle">'+esc(c.title)+'</div>'+(c.detail?'<div class="cdetail">'+esc(c.detail)+'</div>':"")+(PLAIN[c.id]?'<div class="cplain">In plain English: '+esc(PLAIN[c.id])+'</div>':"")+'</div></div>';
+    });
+  });
+  /* any ungrouped */
+  rep.checks.forEach(function(c){ if(!rendered[c.id]){ /* gated.manifest.* variants */ } });
+  /* share route */
+  var route="#/check/eip155:"+(rep.chainId==null?"?":rep.chainId)+"/"+rep.contract+"/"+rep.tokenId+"?mode="+rep.mode;
+  html+='<div class="share-route"><b>Shareable route, append to the PassWrks Checker URL to restore this exact check</b>'+esc(route)+'</div>';
+  html+='<div class="report-actions">'
+    +'<button class="btn primary" id="dlJson">Download report .json</button>'
+    +'<button class="btn" id="dlMd">Download report .md</button>'
+    +'<button class="btn" id="copyRoute">Copy share route</button>'
+    +'<button class="btn" id="copyCli2">Copy CLI equivalent</button>'
+    +'</div>';
+  body.innerHTML=html;
+  $("reportStampLine").textContent=(rep.sample?"SAMPLE":"REPORT")+" · "+rep.checks.length+" CHECKS · "+verdictTxt.toUpperCase();
+  body.querySelectorAll("[data-copy]").forEach(function(b){ b.addEventListener("click",function(){ copyText(b.getAttribute("data-copy"),"Copied"); }); });
+  $("copyRoute").addEventListener("click",function(){ copyText(route,"Share route copied, append it to the checker URL"); });
+  $("copyCli2").addEventListener("click",function(){ copyText(cliCommand(),"CLI command copied"); });
+  $("dlJson").addEventListener("click",function(){ download("passwrks-report-"+rep.tokenId+".json", JSON.stringify(rep,null,2), "application/json"); });
+  $("dlMd").addEventListener("click",function(){ download("passwrks-report-"+rep.tokenId+".md", toMarkdown(rep), "text/markdown"); });
+}
+function download(name, content, type){ var blob=new Blob([content],{type:type}); var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400); }
+function toMarkdown(rep){
+  var lines=["# PassWrks, ERC-8426 Conformance Report","", "- Contract: `"+rep.contract+"`","- Token ID: "+rep.tokenId,"- Chain ID: "+(rep.chainId==null?"unknown":rep.chainId),"- Configuration: "+rep.configuration,"- passURI: "+(rep.passUri||"n/a"),"- Summary: "+rep.summary.pass+" pass · "+rep.summary.fail+" fail · "+rep.summary.warn+" warn · "+rep.summary.skip+" skip","","| Check | Level | Result | Detail |","|---|---|---|---|"];
+  rep.checks.forEach(function(c){ lines.push("| `"+c.id+"` | "+c.level+" | "+c.status.toUpperCase()+" | "+(c.detail||"").replace(/\|/g,"/")+" |"); });
+  return lines.join("\n");
+}
+function summarize(checks){ var s={pass:0,fail:0,warn:0,skip:0}; checks.forEach(function(c){ if(c.status==="pass")s.pass++; else if(c.status==="fail")s.fail++; else if(c.status==="warn")s.warn++; else s.skip++; }); return s; }
+function setProgress(pct,show){ var pl=$("progressLine"); pl.style.display=show?"block":"none"; if(show) pl.querySelector("i").style.width=pct+"%"; }
+
+/* ═══════════ Offline manifest validation ═══════════ */
+$("manifestBtn").addEventListener("click",function(){
+  var raw=$("manifestPaste").value.trim(); var msg=$("manifestMsg");
+  if(!raw){ msg.textContent="Paste a manifest JSON first."; msg.className="msg err"; return; }
+  var val; try{ val=JSON.parse(raw); }catch(e){ msg.textContent="Not valid JSON: "+e.message; msg.className="msg err"; return; }
+  var res=parseManifest(val);
+  var vs=manifestVersionStatus(val);
+  var checks=[
+    {id:"manifest.valid",title:titleOf("manifest.valid")[3],section:"Pass manifest",level:"MUST",status:res.ok?"pass":"fail",detail:res.issues.filter(function(i){return i.level==="error";}).map(function(i){return (i.path?i.path+": ":"")+i.message;}).join(" · ")||"formats and updatedAt within spec, and a version that is understood"},
+    {id:"manifest.version",title:titleOf("manifest.version")[3],section:"Pass manifest",level:"MUST",status:vs.status,detail:vs.detail},
+    {id:"manifest.lint",title:titleOf("manifest.lint")[3],section:"Pass manifest",level:"SHOULD",status:res.issues.some(function(i){return i.level==="warning";})?"warn":"pass",detail:res.issues.filter(function(i){return i.level==="warning";}).map(function(i){return (i.path?i.path+": ":"")+i.message;}).join(" · ")||"No lint warnings"},
+    {id:"issuer.commitment",title:titleOf("issuer.commitment")[3],section:"Issuer identity commitment",level:"MUST",status:"skip",detail:"Offline validation has no contract to probe, so no issuer commitment was read"},
+    {id:"manifest.issuer-commitment",title:titleOf("manifest.issuer-commitment")[3],section:"Issuer identity commitment",level:"MUST",status:"skip",detail:"Offline validation has no contract to probe, so no issuer commitment was read"}
+  ];
+  msg.textContent=(res.ok&&vs.status==="pass")?"Manifest parses clean against @erc8426/core 0.4.0 rules (offline).":"Manifest has MUST-level errors, see report."; msg.className="msg "+((res.ok&&vs.status==="pass")?"ok":"err");
+  renderReport({contract:"(offline manifest)",tokenId:"n/a",chainId:null,owner:null,passUri:null,manifestUrl:"pasted JSON",configuration:"offline",mode:"public",block:null,when:new Date().toLocaleString(),checks:checks,summary:summarize(checks),sample:false});
+  $("reportPanel").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+/* ═══════════ Demo report ═══════════ */
+$("demoBtn").addEventListener("click",function(){
+  var D=[
+   ["contract.erc165","pass","supportsInterface(0x01ffc9a7) returned true"],
+   ["contract.erc165-invalid","pass","supportsInterface(0xffffffff) returned false"],
+   ["contract.interface-id","pass","supportsInterface(0xef5f1e71) returned true"],
+   ["contract.passuri","pass","https://passes.example.com/wallet-pass/412"],
+   ["contract.passuri-nonexistent","pass","reverted for token 999999"],
+   ["issuer.commitment","skip","The contract does not implement the optional interface (0x470be7e9), so it makes no issuer identity commitment"],
+   ["manifest.reachable","pass","HTTP 401, gated configuration detected"],
+   ["manifest.media-type","skip","No public manifest body on a gated issuer"],
+   ["manifest.valid","skip","Verified on the owner\u2019s gated manifest instead"],
+   ["manifest.lint","skip","Verified on the owner\u2019s gated manifest instead"],
+   ["manifest.version","skip","Verified as gated.manifest.version on the owner\u2019s gated manifest instead"],
+   ["manifest.issuer-commitment","skip","The contract makes no issuer identity commitment"],
+   ["gated.manifest.version","skip","Owner key required, run with --owner-key-env ERC8426_OWNER_KEY"],
+   ["gated.manifest.issuer-commitment","skip","The contract makes no issuer identity commitment"],
+   ["mirror.valid","pass","tokenURI wallet_pass mirror parses"],
+   ["mirror.gated-no-urls","pass","Mirror carries no acquisition URLs"],
+   ["gated.401-proof-required","pass","401 · error proof_required · challenge URI present"],
+   ["gated.401-no-urls","pass","401 body carries no acquisition URLs"],
+   ["challenge.missing-address","pass","400 as required"],
+   ["challenge.invalid-address","pass","400 as required"],
+   ["challenge.issued","pass","SIWE message issued for the owner address"],
+   ["challenge.domain","pass","Domain: passes.example.com"],
+   ["challenge.chain-id","pass","Chain ID 8453 matches the token\u2019s chain"],
+   ["challenge.nonce","pass","Nonce present"],
+   ["challenge.expiration","pass","Expiration Time 42 minutes ahead"],
+   ["challenge.token-resource","pass","eip155:8453/erc721:0x5F9B…c2e1/412"],
+   ["challenge.action-resource","pass","urn:wallet-pass:action:acquire"],
+   ["challenge.fresh-nonce","pass","Two requests, two distinct nonces"],
+   ["gated.garbage-proof","pass","Refused with 401. A signature of 0x alone, or with an odd number of hex digits, is refused with 401 signature_invalid, not 400 invalid_request"],
+   ["gated.non-owner-403","skip","Run the CLI suite, needs a signed proof from a fresh non-owner key"],
+   ["gated.owner-200","skip","Owner key required, run with --owner-key-env ERC8426_OWNER_KEY"],
+   ["gated.no-store","skip","Owner key required"],
+   ["gated.replay-refused","skip","Owner key required"],
+   ["gated.expired-proof","skip","Cannot be produced without the server\u2019s cooperation; covered by the issuer\u2019s own tests"],
+   ["gated.wrong-domain-proof","skip","Cannot be produced without the server\u2019s cooperation; covered by the issuer\u2019s own tests"]
+  ];
+  var checks=D.map(function(d){ var r=titleOf(d[0]); return {id:d[0],title:r[3],section:r[2],level:r[1],status:d[1],detail:d[2]}; });
+  renderReport({contract:"0x5F9B00000000000000000000000000000000c2e1",tokenId:"412",chainId:8453,owner:"0x8ba1f109551bD432803012645Ac136ddd64DBA72",passUri:"https://passes.example.com/wallet-pass/412",manifestUrl:"https://passes.example.com/wallet-pass/412",configuration:"gated",mode:"gated",block:"21,483,902",when:new Date().toLocaleString(),checks:checks,summary:summarize(checks),sample:true});
+  $("reportPanel").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+/* ═══════════ Live run ═══════════ */
+$("clearBtn").addEventListener("click",function(){ $("contract").value=""; $("tokenId").value=""; $("ownerAddr").value=""; validateAll(false); syncCli(); });
+$("checkForm").addEventListener("submit",function(ev){
+  ev.preventDefault();
+  if(!validateAll(true)){ toast("Fix the highlighted fields first, that's exit code 2 territory"); return; }
+  runLive();
+});
+function runLive(){
+  var rpc=$("rpcUrl").value.trim(), contract=$("contract").value.trim(), tokenId=$("tokenId").value.trim();
+  var missing=$("missingId").value.trim()||"115792089237316195423570985008687907853269984665640564039457584007913129639935";
+  var checks=[]; var byId={};
+  function rec(id,status,detail){ var r=titleOf(id); var c=byId[id]; if(!c){ c={id:id,title:r[3],section:r[2],level:r[1],status:status,detail:detail||""}; byId[id]=c; checks.push(c);} else { c.status=status; if(detail) c.detail=detail; } return c; }
+  REGISTRY.forEach(function(r){ rec(r[0],"skip","Not reached yet"); });
+  var rep={contract:contract,tokenId:tokenId,chainId:null,owner:null,passUri:null,manifestUrl:null,configuration:"unknown",mode:mode,block:null,when:new Date().toLocaleString(),checks:checks,summary:summarize(checks),sample:false};
+  function paint(){ rep.summary=summarize(checks); renderReport(rep); }
+  var btn=$("runBtn"); btn.disabled=true; btn.textContent="Running, reading chain…";
+  setProgress(6,true); paint();
+  var chainId=null, passUri=null, owner=null, commitment=null, commitmentState="none";
+
+  function finish(){ btn.disabled=false; btn.textContent="Run conformance check →"; setProgress(100,true); setTimeout(function(){setProgress(0,false);},600); paint();
+    recentRuns.unshift({contract:contract,tokenId:tokenId,chainId:chainId}); if(recentRuns.length>4) recentRuns.pop();
+    var rr=$("recentRow"); rr.innerHTML='<span class="mono" style="font-size:11px;color:var(--ink-2)">THIS SESSION:</span>'+recentRuns.map(function(x,i){ return '<button type="button" data-i="'+i+'">…'+esc(x.contract.slice(-6))+' #'+esc(x.tokenId)+'</button>'; }).join("");
+    rr.querySelectorAll("button").forEach(function(b){ b.addEventListener("click",function(){ var x=recentRuns[+b.getAttribute("data-i")]; $("contract").value=x.contract; $("tokenId").value=x.tokenId; validateAll(false); syncCli(); }); });
+  }
+  function skipRest(prefix,reason){ REGISTRY.forEach(function(r){ if(r[0].indexOf(prefix)===0 && byId[r[0]].status==="skip" && byId[r[0]].detail==="Not reached yet") byId[r[0]].detail=reason; }); }
+  function issuerSkipReason(){ return commitmentState==="none" ? "The contract makes no issuer identity commitment" : (commitmentState==="read" ? "The gated manifest was not resolved (supply the owner key to compare)" : "passIssuer() could not be read as an issuer object"); }
+  function recordVersion(raw,prefix){ var vs=manifestVersionStatus(raw); rec(prefix+".version", vs.status, vs.detail); }
+  function recordIssuerEq(raw,prefix){ var id=prefix+".issuer-commitment"; if(commitmentState==="none"){ rec(id,"skip","The contract makes no issuer identity commitment"); return; } if(commitmentState!=="read"||!commitment){ rec(id,"skip","passIssuer() could not be read as an issuer object"); return; } if(!raw||raw.issuer===undefined){ rec(id,"fail","The manifest carries no issuer member"); return; } var pp=parsePassIssuer(raw.issuer,"issuer"); if(!pp.ok){ rec(id,"fail",pp.issues.map(function(i){return (i.path?i.path+": ":"")+i.message;}).join(" \u00b7 ")); return; } var diffs=diffPassIssuer(commitment,pp.issuer); rec(id, diffs.length?"fail":"pass", diffs.length?("Differs at: "+diffs.join(", ")):"Issuer equals passIssuer() member for member"); }
+
+  rpcCall(rpc,"eth_chainId",[]).then(function(hex){ chainId=parseInt(hex,16); rep.chainId=chainId; return rpcCall(rpc,"eth_blockNumber",[]); })
+  .then(function(bn){ rep.block=String(parseInt(bn,16)).replace(/\B(?=(\d{3})+(?!\d))/g,","); setProgress(14,true);
+    /* contract probes */
+    return Promise.all([
+      ethCall(rpc,contract,encSupports("0x01ffc9a7")).then(function(r){ rec("contract.erc165", decodeBool(r)?"pass":"fail", "supportsInterface(0x01ffc9a7) returned "+decodeBool(r)); },function(e){ rec("contract.erc165","fail","call failed: "+e.message); }),
+      ethCall(rpc,contract,encSupports("0xffffffff")).then(function(r){ rec("contract.erc165-invalid", decodeBool(r)===false?"pass":"fail", "supportsInterface(0xffffffff) returned "+decodeBool(r)); },function(e){ rec("contract.erc165-invalid","fail","call failed: "+e.message); }),
+      ethCall(rpc,contract,encSupports("0xef5f1e71")).then(function(r){ rec("contract.interface-id", decodeBool(r)?"pass":"fail", "supportsInterface(0xef5f1e71) returned "+decodeBool(r)); },function(e){ rec("contract.interface-id","fail","call failed: "+e.message); }),
+      ethCall(rpc,contract,encSupports("0x470be7e9")).then(function(r){ var claims=decodeBool(r); if(claims===true){ return ethCall(rpc,contract,"0x470be7e9").then(function(pr){ var text=decodeString(pr); if(!text){ commitmentState="unreadable"; rec("issuer.commitment","fail","The contract claims the interface, but passIssuer() reverted or returned nothing"); return; } var parsed=parsePassIssuerJson(text); if(parsed.ok){ commitment=parsed.issuer; commitmentState="read"; rec("issuer.commitment","pass","formats: "+(Object.keys(parsed.issuer).join(", ")||"(none)")); } else { commitmentState="unreadable"; rec("issuer.commitment","fail",parsed.issues.map(function(i){return (i.path?i.path+": ":"")+i.message;}).join(" \u00b7 ")); } },function(e2){ commitmentState="unreadable"; rec("issuer.commitment","fail","The contract claims the interface, but passIssuer() reverted or could not be read: "+String(e2.message).split("\n")[0]); }); } if(claims===false){ commitmentState="none"; rec("issuer.commitment","skip","The contract does not implement the optional interface (0x470be7e9), so it makes no issuer identity commitment"); return; } commitmentState="unreadable"; rec("issuer.commitment","fail","supportsInterface(0x470be7e9) returned no data"); },function(e){ commitmentState="unreadable"; rec("issuer.commitment","fail","supportsInterface(0x470be7e9) read failed, and a failed read is a failure, not a skip: "+String(e.message).split("\n")[0]); }),
+      ethCall(rpc,contract,"0xef5f1e71"+encUint(tokenId)).then(function(r){ passUri=decodeString(r); if(passUri){ rec("contract.passuri","pass",passUri); } else rec("contract.passuri","fail","returned an empty URI"); },function(e){ rec("contract.passuri","fail","reverted: "+String(e.message).split("\n")[0]); }),
+      ethCall(rpc,contract,"0xef5f1e71"+encUint(missing)).then(function(r){ var v=decodeString(r); rec("contract.passuri-nonexistent","fail","token "+missing.slice(0,12)+"… returned "+(v?"\""+v+"\"":"a value")+" instead of reverting"); },function(e){ rec("contract.passuri-nonexistent","pass","reverted as required"); }),
+      ethCall(rpc,contract,"0x6352211e"+encUint(tokenId)).then(function(r){ if(r&&r.length>=42){ owner="0x"+r.slice(-40); rep.owner=owner; rec("challenge.address","skip","ownerOf resolved: "+owner+", full echo check runs on the challenge below"); } },function(e){})
+    ]);
+  })
+  .then(function(){ setProgress(38,true); paint();
+    rep.passUri=passUri;
+    if(!passUri){ skipRest("issuer.","No passURI to resolve"); skipRest("manifest.","No passURI to resolve"); skipRest("mirror.","No passURI; mirror not evaluated"); skipRest("gated.","No manifest endpoint to probe"); skipRest("challenge.","No manifest endpoint to probe"); finish(); return null; }
+    var manifestUrl=resolveUri(passUri); rep.manifestUrl=manifestUrl;
+    if(manifestUrl.indexOf("data:")===0){
+      try{ var json=JSON.parse(decodeURIComponent(manifestUrl.slice(manifestUrl.indexOf(",")+1))); var res=parseManifest(json);
+        rec("manifest.reachable","pass","Inline data: manifest in passURI");
+        rec("manifest.valid",res.ok?"pass":"fail",res.issues.filter(function(i){return i.level==="error";}).map(function(i){return i.message;}).join(" · ")||"Shape valid");
+        rec("manifest.lint",res.issues.some(function(i){return i.level==="warning";})?"warn":"pass",res.issues.filter(function(i){return i.level==="warning";}).map(function(i){return i.message;}).join(" · ")||"No lint warnings");
+        recordVersion(json,"manifest"); recordIssuerEq(json,"manifest");
+        rec("gated.manifest.version","skip","Public issuer, this check runs on the owner\u2019s gated manifest only");
+        rec("gated.manifest.issuer-commitment","skip", commitmentState==="none" ? "The contract makes no issuer identity commitment" : "Public issuer, this check runs on the owner\u2019s gated manifest only");
+        rep.configuration="public";
+      }catch(e){ rec("manifest.valid","fail","data: URI is not JSON"); rec("manifest.version","fail","data: URI is not JSON, so no version can be read"); rec("manifest.issuer-commitment","skip",issuerSkipReason()); }
+      finish(); return null;
+    }
+    /* manifest fetch */
+    return fetchWithTimeout(manifestUrl,{headers:{"Accept":"application/json"}}).then(function(resp){
+      var status=resp.status; var ct=resp.headers.get("content-type")||"";
+      return resp.text().then(function(text){ return {status:status,ct:ct,text:text,headers:resp.headers}; });
+    }).then(function(mres){
+      setProgress(58,true);
+      if(mres.status===200){
+        rep.configuration="public";
+        rec("manifest.reachable","pass","HTTP 200 (public)");
+        rec("manifest.media-type", mres.ct.indexOf("application/json")>=0?"pass":"fail","Content-Type: "+(mres.ct||"(none)"));
+        var json=null; try{ json=JSON.parse(mres.text); }catch(e){}
+        if(!json){ rec("manifest.valid","fail","Body is not JSON"); rec("manifest.version","fail","Body is not JSON, so no version can be read"); rec("manifest.issuer-commitment","skip",issuerSkipReason()); }
+        else{
+          var res=parseManifest(json);
+          rec("manifest.valid",res.ok?"pass":"fail",res.issues.filter(function(i){return i.level==="error";}).map(function(i){return (i.path?i.path+": ":"")+i.message;}).join(" · ")||"formats and updatedAt within spec, and a version that is understood");
+          recordVersion(json,"manifest"); recordIssuerEq(json,"manifest");
+          rec("gated.manifest.version","skip","Public issuer, this check runs on the owner\u2019s gated manifest only");
+          rec("gated.manifest.issuer-commitment","skip", commitmentState==="none" ? "The contract makes no issuer identity commitment" : "Public issuer, this check runs on the owner\u2019s gated manifest only");
+          var warns=res.issues.filter(function(i){return i.level==="warning";});
+          rec("manifest.lint",warns.length?"warn":"pass",warns.map(function(i){return (i.path?i.path+": ":"")+i.message;}).join(" · ")||"No lint warnings");
+          if(res.manifest&&res.manifest.formats.apple){
+            var appleUrl=res.manifest.formats.apple;
+            fetchWithTimeout(appleUrl,{method:"HEAD"}).then(function(ar){
+              var act=ar.headers.get("content-type")||"";
+              rec("manifest.apple-media-type", act.indexOf("application/vnd.apple.pkpass")>=0?"pass":"warn","Content-Type: "+(act||"(none)"));
+              paint();
+            },function(e){ rec("manifest.apple-reachable","fail","Apple URL could not be fetched from the browser ("+e.message+"), may be CORS; verify with the CLI"); rec("manifest.apple-media-type","skip","Apple URL unreachable from browser"); paint(); });
+          } else { rec("manifest.apple-media-type","skip","No apple format in manifest"); rec("manifest.apple-reachable","skip","No apple format in manifest"); }
+          if(res.manifest&&!res.manifest.formats.apple){ /* handled above */ }
+          skipRest("gated.","Public issuer, gated checks do not apply");
+          skipRest("challenge.","Public issuer, no challenge flow");
+        }
+      } else if(mres.status===401){
+        rep.configuration="gated";
+        rec("manifest.reachable","pass","HTTP 401 (gated)");
+        rec("manifest.media-type","skip","401 body is not the manifest; media type is verified on the owner\u2019s gated manifest");
+        rec("manifest.valid","skip","Verified as gated.manifest.* on the owner\u2019s manifest, needs owner proof (CLI)");
+        rec("manifest.lint","skip","Needs the owner\u2019s gated manifest (CLI)");
+        rec("manifest.version","skip","Verified as gated.manifest.version on the owner\u2019s gated manifest, needs owner proof (CLI)");
+        rec("manifest.issuer-commitment","skip", commitmentState==="none" ? "The contract makes no issuer identity commitment" : "Verified as gated.manifest.issuer-commitment on the owner\u2019s gated manifest, needs owner proof (CLI)");
+        rec("gated.manifest.version","skip","Owner key required, verified on the owner\u2019s gated manifest via the CLI");
+        rec("gated.manifest.issuer-commitment","skip",issuerSkipReason());
+        var body=null; try{ body=JSON.parse(mres.text); }catch(e){}
+        var hasUrls = mres.text.indexOf("pay.google.com")>=0 || /\.pkpass/.test(mres.text) || (body&&body.formats);
+        rec("gated.401-no-urls", hasUrls?"fail":"pass", hasUrls?"401 body appears to carry acquisition URLs":"401 body carries no acquisition URLs");
+        var challengeUri = body&&(body.challenge||body.challengeUri||body.challenge_uri);
+        if(body&&body.error==="proof_required"&&challengeUri){ rec("gated.401-proof-required","pass","error proof_required · challenge: "+challengeUri); }
+        else if(body&&body.error==="proof_required"){ rec("gated.401-proof-required","fail","error is proof_required but no challenge URI found in the 401 body"); }
+        else { rec("gated.401-proof-required","fail","401 body did not match { error: \"proof_required\", challenge }, got: "+mres.text.slice(0,140)); }
+        /* garbage proof */
+        fetchWithTimeout(manifestUrl,{headers:{"Wallet-Pass-Proof":"garbage","Wallet-Pass-Signature":"garbage"}}).then(function(gr){
+          rec("gated.garbage-proof", (gr.status!==403&&gr.status!==200)?"pass":"fail","Garbage proof answered HTTP "+gr.status+" (must be refused, and not with 403)"); paint();
+        },function(e){ rec("gated.garbage-proof","skip","Could not re-request from the browser: "+e.message); paint(); });
+        /* challenge probes */
+        if(challengeUri){
+          var chUrl=resolveUri(challengeUri, null); if(chUrl.indexOf("http")!==0){ try{ chUrl=new URL(challengeUri, manifestUrl).href; }catch(e){} }
+          var probeAddr=($("ownerAddr").value.trim()||owner||"0x0000000000000000000000000000000000000001");
+          var sep=chUrl.indexOf("?")>=0?"&":"?";
+          var reqs=[
+            fetchWithTimeout(chUrl,{}).then(function(r){ rec("challenge.missing-address", r.status===400?"pass":"fail","No-address request answered HTTP "+r.status+" (want 400)"); },function(e){ rec("challenge.missing-address","skip","Browser fetch failed: "+e.message); }),
+            fetchWithTimeout(chUrl+sep+"address=notanaddress",{}).then(function(r){ rec("challenge.invalid-address", r.status===400?"pass":"fail","Invalid-address request answered HTTP "+r.status+" (want 400)"); },function(e){ rec("challenge.invalid-address","skip","Browser fetch failed: "+e.message); }),
+            fetchWithTimeout(chUrl+sep+"address="+probeAddr,{}).then(function(r){ return r.text().then(function(t){ return {status:r.status,text:t}; }); }).then(function(cr){
+              var msg=null; try{ var j=JSON.parse(cr.text); msg=j.message||j.challenge; }catch(e){}
+              if(cr.status===200&&msg){
+                rec("challenge.issued","pass","Challenge message issued for "+probeAddr.slice(0,10)+"…");
+                var isSiwe=/Sign-In with Ethereum|sign in with Ethereum/i.test(msg)||/ wants you to sign in with your Ethereum account/.test(msg);
+                rec("challenge.siwe", isSiwe?"pass":"warn", isSiwe?"Message follows ERC-4361 shape":"Message issued but does not look like an ERC-4361 message");
+                var lines=msg.split("\n");
+                var domainLine=lines[0]||""; var dom=domainLine.split(" ")[0];
+                rec("challenge.domain", dom?"pass":"fail", dom?("Verifier domain: "+dom):"No domain found on the first line");
+                try{ var host=new URL(manifestUrl).host; rec("challenge.domain-host", dom===host?"pass":"warn","Domain "+dom+" vs serving host "+host); }catch(e){ rec("challenge.domain-host","skip","Could not parse manifest host"); }
+                rec("challenge.address", msg.indexOf(probeAddr)>=0||msg.toLowerCase().indexOf(probeAddr.toLowerCase())>=0?"pass":"fail","Challenge "+(msg.toLowerCase().indexOf(probeAddr.toLowerCase())>=0?"echoes":"does not echo")+" the requested address");
+                var chainMatch=msg.match(/Chain ID:\s*(\d+)/); if(chainMatch){ rec("challenge.chain-id", +chainMatch[1]===chainId?"pass":"fail","Challenge chain "+chainMatch[1]+" vs token chain "+chainId); } else rec("challenge.chain-id","fail","No Chain ID line in the challenge");
+                var nonceMatch=msg.match(/Nonce:\s*(\S+)/); rec("challenge.nonce", nonceMatch?"pass":"fail", nonceMatch?("Nonce "+nonceMatch[1].slice(0,12)+"…"):"No nonce in the challenge");
+                var expMatch=msg.match(/Expiration Time:\s*(\S+)/); if(expMatch){ var d=new Date(expMatch[1]); rec("challenge.expiration", (!isNaN(d)&&d>new Date())?"pass":"fail","Expiration Time: "+expMatch[1]); } else rec("challenge.expiration","fail","No Expiration Time in the challenge");
+                var caip="eip155:"+chainId+"/erc721:"+contract+"/"+tokenId;
+                rec("challenge.token-resource", msg.indexOf(caip)>=0?"pass":"fail", msg.indexOf(caip)>=0?("First resource is "+caip):"Expected resource "+caip+" not found verbatim");
+                rec("challenge.action-resource", msg.indexOf("urn:wallet-pass:action:acquire")>=0?"pass":"fail", msg.indexOf("urn:wallet-pass:action:acquire")>=0?"Action resource present":"urn:wallet-pass:action:acquire not found");
+                /* fresh nonce */
+                fetchWithTimeout(chUrl+sep+"address="+probeAddr,{}).then(function(r2){ return r2.text(); }).then(function(t2){ var j2; try{ j2=JSON.parse(t2); }catch(e){} var m2=j2&&(j2.message||""); var n2=(String(m2).match(/Nonce:\s*(\S+)/)||[])[1]; var n1=nonceMatch&&nonceMatch[1]; rec("challenge.fresh-nonce", (n1&&n2&&n1!==n2)?"pass":"fail", (n1&&n2)?(n1!==n2?"Two requests, two distinct nonces":"Both requests returned the same nonce"):"Could not compare nonces"); paint(); },function(e){ rec("challenge.fresh-nonce","skip","Second challenge fetch failed: "+e.message); paint(); });
+                try{ var encProof=btoa(msg).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); fetchWithTimeout(manifestUrl,{headers:{"Wallet-Pass-Proof":encProof,"Wallet-Pass-Signature":"0x"}}).then(function(sr){ return sr.text().then(function(st){ if(sr.status===400){ rec("gated.garbage-proof","fail","A signature of 0x alone was answered HTTP 400, must be 401 signature_invalid in SDK 0.4.0, not 400 invalid_request. Body: "+st.slice(0,120)); } else if(sr.status===401&&st.indexOf("signature_invalid")>=0){ var cur=byId["gated.garbage-proof"]; if(cur&&cur.status==="pass") cur.detail="Garbage proof refused, and a signature of 0x alone was refused with 401 signature_invalid as SDK 0.4.0 requires, not 400 invalid_request"; } paint(); }); },function(e){ }); }catch(e){}
+              } else { rec("challenge.issued","fail","Valid-address request answered HTTP "+cr.status+" without a message"); }
+              paint();
+            },function(e){ rec("challenge.issued","skip","Browser fetch failed (often CORS): "+e.message); })
+          ];
+          Promise.all(reqs).then(function(){ paint(); });
+        } else {
+          skipRest("challenge.","No challenge URI in the 401 body to probe");
+        }
+        rec("gated.non-owner-403","skip","Needs a signed proof from a fresh non-owner key, the CLI suite generates one internally; this page never holds keys");
+        rec("gated.owner-200","skip","Owner key required, run the CLI with --owner-key-env (key read from env only, never a flag)");
+        rec("gated.no-store","skip","Owner key required, verified on the owner\u2019s 200 response via the CLI");
+        rec("gated.replay-refused","skip","Owner key required, verified via the CLI");
+        rec("gated.expired-proof","skip","Cannot be produced without the server\u2019s cooperation; covered by the issuer\u2019s own tests");
+        rec("gated.wrong-domain-proof","skip","Cannot be produced without the server\u2019s cooperation; covered by the issuer\u2019s own tests");
+      } else {
+        rec("manifest.reachable","fail","HTTP "+mres.status+", want 200 (public) or 401 (gated)");
+        skipRest("manifest.","Manifest endpoint did not answer 200 or 401");
+        skipRest("gated.","Manifest endpoint did not answer as a gated issuer");
+        skipRest("challenge.","Manifest endpoint did not answer as a gated issuer");
+      }
+      paint();
+      /* mirror via tokenURI */
+      return ethCall(rpc,contract,"0xc87b56dd"+encUint(tokenId)).then(function(r){
+        var turi=decodeString(r); if(!turi){ rec("mirror.valid","skip","tokenURI did not resolve to readable metadata"); paint(); return; }
+        var turl=resolveUri(turi);
+        var parseMeta=function(json){
+          if(json&&typeof json==="object"&&json.wallet_pass!==undefined){
+            var mr=parseManifest(json.wallet_pass);
+            rec("mirror.valid", mr.ok?"pass":"fail", mr.issues.map(function(i){return i.message;}).join(" · ")||"wallet_pass mirror is a valid manifest");
+            if(rep.configuration==="gated"){ var s=JSON.stringify(json.wallet_pass); var leaks=s.indexOf("pay.google.com")>=0||/\.pkpass/.test(s)||(json.wallet_pass.formats&&Object.keys(json.wallet_pass.formats).length>0); rec("mirror.gated-no-urls", leaks?"fail":"pass", leaks?"Gated mirror appears to carry acquisition URLs":"Gated mirror carries no acquisition URLs"); }
+            else rec("mirror.gated-no-urls","skip","Public issuer, gated mirror rule does not apply");
+          } else { rec("mirror.valid","skip","No wallet_pass key in tokenURI metadata (the mirror is optional)"); rec("mirror.gated-no-urls","skip","No mirror present"); }
+          paint();
+        };
+        if(turl.indexOf("data:")===0){ try{ parseMeta(JSON.parse(decodeURIComponent(turl.slice(turl.indexOf(",")+1)))); }catch(e){ rec("mirror.valid","skip","tokenURI data: payload is not JSON"); } paint(); return; }
+        return fetchWithTimeout(turl,{}).then(function(tr){ return tr.json(); }).then(parseMeta,function(e){ rec("mirror.valid","skip","tokenURI metadata not fetchable from the browser: "+e.message); paint(); });
+      },function(e){ rec("mirror.valid","skip","tokenURI call failed: "+e.message); rec("mirror.gated-no-urls","skip","tokenURI call failed"); paint(); });
+    },function(fetchErr){
+      rec("manifest.reachable","skip","Manifest fetch failed from the browser ("+fetchErr.message+"), commonly CORS. The CLI run settles this check.");
+      skipRest("manifest.","Manifest not fetchable from the browser");
+      byId["manifest.reachable"].detail="Manifest fetch failed from the browser ("+fetchErr.message+"), commonly CORS. The CLI run settles this check.";
+      skipRest("gated.","Manifest not fetchable from the browser");
+      skipRest("challenge.","Manifest not fetchable from the browser");
+      skipRest("mirror.","Not evaluated, manifest pass did not complete");
+      paint(); return null;
+    });
+  })
+  .then(function(){ finish(); })
+  .catch(function(e){
+    rec("contract.erc165","fail","RPC unreachable: "+e.message);
+    skipRest("issuer.","RPC unreachable"); skipRest("manifest.","RPC unreachable"); skipRest("mirror.","RPC unreachable"); skipRest("gated.","RPC unreachable"); skipRest("challenge.","RPC unreachable");
+    rep.configuration="unknown"; finish();
+    toast("RPC unreachable, check the URL and try again");
+  });
+}
+validateAll(false);
+</script>
+</body>
+</html>
